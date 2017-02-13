@@ -725,11 +725,23 @@ func GetIface() Iface {
 	return ifaces[0]
 }
 
-func Scp(src, dst, ip, user, password string) {
+func StreamEasySsh(ip, user, password, port, key, command string, timeout int) (chan string, chan string, chan bool, error) {
 	ssh := &easyssh.MakeConfig{
 		User:     user,
 		Password: password,
-		Port:     "22",
+		Port:     port,
+		Server:   ip,
+		Key:      key,
+	}
+
+	return ssh.Stream(fmt.Sprintf("sudo %s", command), timeout)
+}
+
+func ScpWPort(src, dst, ip, port, user, password string) error {
+	ssh := &easyssh.MakeConfig{
+		User:     user,
+		Password: password,
+		Port:     port,
 		Server:   ip,
 		Key:      "~/.ssh/id_rsa.pub",
 	}
@@ -739,13 +751,21 @@ func Scp(src, dst, ip, user, password string) {
 	err := ssh.Scp(src, fName)
 	if err != nil {
 		fmt.Println("[-] Error uploading file:", err.Error())
+		return err
 	} else {
 		fmt.Println("\n[+] Successfully uploaded file : ", fName)
 		_, err := RunSshWithTimeout(ssh, fmt.Sprintf("sudo mv ~/%s %s", fName, dst), SshExtendedCommandTimeout)
 		if err != nil {
 			fmt.Println("[+] Error moving file: ", err.Error())
+			return err
 		}
 	}
+
+	return nil
+}
+
+func Scp(src, dst, ip, user, password string) {
+	ScpWPort(src, dst, ip, "22", user, password)
 }
 
 func ScpSilent(src, dst, ip, user, password string) error {
