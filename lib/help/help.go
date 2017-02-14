@@ -25,6 +25,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/howeyc/gopass"
 	"github.com/hypersleep/easyssh"
+	"github.com/tj/go-spin"
 	"github.com/xshellinc/tools/lib/sudo"
 	pb "gopkg.in/cheggaaa/pb.v1"
 )
@@ -1114,4 +1115,40 @@ func StringInSlice(a string, list []string) bool {
 	}
 
 	return false
+}
+
+func WaitAndSpin(message string, progress chan bool) {
+	s := spin.New()
+	s.Set(spin.Spin1)
+
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
+
+	prompt := true
+	spinEn := true
+
+	var ok bool
+
+	for prompt {
+		select {
+		case spinEn, ok = <-progress:
+			if !ok {
+				fmt.Print("\n")
+				prompt = false
+			}
+		case <-ticker.C:
+			if spinEn {
+				fmt.Printf("\r[+] %s: %s ", message, s.Next())
+			}
+		}
+	}
+}
+
+func ExitOnError(err error) {
+	if err != nil {
+		log.Error("erro msg:", err.Error())
+		fmt.Println("[-] Error: ", err.Error())
+		fmt.Println("[-] Exiting with exit status 1 ...")
+		os.Exit(1)
+	}
 }
