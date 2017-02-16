@@ -31,4 +31,7 @@ const (
 	DEFAULT_NANOPI_PASSWORD     = "fa"
 	DEFAULT_BEAGLEBONE_USERNAME = "ubuntu"
 	DEFAULT_BEAGLEBONE_PASSWORD = "temppwd"
+
+	DefaultLocale = "en_US.UTF-8"
+	DefaultKeymap = "us "
 )
