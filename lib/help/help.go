@@ -691,7 +691,7 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verb
 		fmt.Printf("[+] Executing %s %s@%s\n", fmt.Sprintf("sudo %s", command), user, ip)
 	}
 
-	out, eut, t, err := ssh.Run("sleep 20", 2)
+	out, eut, t, err := ssh.Run(command, timeout)
 
 	if !t {
 		fmt.Println("[-] Timeout running command : ", command)
