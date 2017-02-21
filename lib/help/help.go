@@ -661,7 +661,18 @@ func ScpWPort(src, dst, ip, port, user, password string) error {
 		Key:      "~/.ssh/id_rsa.pub",
 	}
 
-	return ssh.Scp(src, dst+Separators("linux")+FileName(src))
+	fileName := FileName(src)
+	err := ssh.Scp(src, fileName)
+	if err != nil {
+		return err
+	}
+
+	out, err := RunSudoOverSsh(fmt.Sprintf("mv ~/%s %s", fileName, dst), ip, user, password, false)
+	if err != nil {
+		return errors.New(out)
+	}
+
+	return nil
 }
 
 // Scp file using 22 port
@@ -679,9 +690,9 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verb
 		Key:      "~/.ssh/id_rsa.pub",
 	}
 
-	if sudo {
-		command = "sudo " + command
-	}
+	//if sudo {
+	//	command = "sudo " + command
+	//}
 
 	if sudo && password != "" {
 		command = fmt.Sprintf("echo %s | sudo -S %s", password, command)
@@ -692,7 +703,6 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verb
 	}
 
 	out, eut, t, err := ssh.Run(command, timeout)
-
 	if !t {
 		fmt.Println("[-] Timeout running command : ", command)
 		answ := dialogs.YesNoDialog("[?] Would you like to re-run with extended timeout? ")
