@@ -921,3 +921,23 @@ func ExitOnError(err error) {
 		log.Fatal("erro msg:", err.Error())
 	}
 }
+
+// Checks connection
+func EstablishConn(ip, user, passwd string) bool {
+	fmt.Printf("[+] Trying to reach %s@%s\n", user, ip)
+	ssh := &easyssh.MakeConfig{
+		User:     user,
+		Server:   ip,
+		Password: passwd,
+		Port:     "22",
+	}
+	resp, eut, t, err := ssh.Run("whoami", SshCommandTimeout)
+	if err != nil || !t {
+		fmt.Printf("[-] Host is unreachable %s@%s\n", user, ip, " err: ", eut)
+		return false
+	} else {
+		fmt.Println("[+] Command `whoami` result: ", strings.Trim(resp, "\n"))
+		return true
+	}
+	return false
+}
