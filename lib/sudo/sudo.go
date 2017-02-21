@@ -13,14 +13,18 @@ const (
 	readBufSz      = 8 * 1024
 )
 
+// Default sudo arguments
 var sudoArgs = []string{"-S", "-p", passwordPrompt}
 
 type PasswordCallback func(data interface{}) string
 
+// Exec sudo script with provided password
 func ExecWithPassword(password string, script ...string) ([]byte, []byte, error) {
 	return Exec(func(_ interface{}) string { return password }, nil, script...)
 }
 
+// Exec sudo script with provided password callback function with supplied data for it
+// returns stdOut, latest stdErr row and
 func Exec(cb PasswordCallback, cbData interface{}, script ...string) ([]byte, []byte, error) {
 	cmd := exec.Command(sudoBinary, append(sudoArgs, script...)...)
 

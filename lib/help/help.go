@@ -2,7 +2,6 @@ package help
 
 import (
 	"archive/zip"
-	"bufio"
 	"bytes"
 	"errors"
 	"fmt"
@@ -12,7 +11,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"os/user"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -26,6 +24,7 @@ import (
 	"github.com/howeyc/gopass"
 	"github.com/hypersleep/easyssh"
 	"github.com/tj/go-spin"
+	"github.com/xshellinc/isaax-cli/dialogs"
 	"github.com/xshellinc/tools/lib/sudo"
 	pb "gopkg.in/cheggaaa/pb.v1"
 )
@@ -43,6 +42,7 @@ const (
 	DefaultSshPort = "22"
 )
 
+// Gets homedir based on Os
 func UserHomeDir() string {
 	if runtime.GOOS == "windows" {
 		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
@@ -54,11 +54,22 @@ func UserHomeDir() string {
 	return os.Getenv("HOME")
 }
 
+// Returns the string separator
 func Separator() string {
-	s := string(filepath.Separator)
-	return s
+	return string(filepath.Separator)
 }
 
+// Returns Os dependent separator
+func Separators(os string) string {
+	switch os {
+	case "linux":
+		return string(filepath.Separator)
+	default:
+		return ""
+	}
+}
+
+// Executes commands via sudo
 func ExecSudo(cb sudo.PasswordCallback, cbData interface{}, script ...string) (string, error) {
 	out, eut, err := sudo.Exec(cb, cbData, script...)
 	LogCmdErrors(string(out), string(eut), err, script...)
@@ -68,6 +79,7 @@ func ExecSudo(cb sudo.PasswordCallback, cbData interface{}, script ...string) (s
 	return string(out), err
 }
 
+// Executes command
 func ExecCmd(cmdName string, cmdArgs []string) (string, error) {
 	cmd := exec.Command(cmdName, cmdArgs...)
 	cmdOutput := &bytes.Buffer{}
@@ -97,7 +109,7 @@ func CreateFile(path string) {
 	// create file if not exists
 	if os.IsNotExist(err) {
 		var file, err = os.Create(path)
-		logError(err)
+		LogError(err)
 		defer file.Close()
 	}
 }
@@ -115,7 +127,7 @@ func DeleteFile(path string) error {
 	log.Debug("deleting file:", path)
 	err := os.Remove(path)
 	if err != nil {
-		logError(err)
+		LogError(err)
 		return err
 	}
 	return nil
@@ -124,45 +136,39 @@ func DeleteFile(path string) error {
 func WriteFile(path string, content string) {
 	// open file using READ & WRITE permission
 	var file, err = os.OpenFile(path, os.O_RDWR, 0644)
-	logError(err)
+	LogError(err)
 	defer file.Close()
 	// write some text to file
 	_, err = file.WriteString(content)
-	logError(err)
+	LogError(err)
 	// save changes
 	err = file.Sync()
-	logError(err)
+	LogError(err)
 	err = file.Sync()
-	logError(err)
+	LogError(err)
 }
 
 func DeleteDir(dir string) error {
 	d, err := os.Open(dir)
 	log.Debug("DeleteDir func():", "removing dir:", dir)
 	if err != nil {
-		logError(err)
+		LogError(err)
 		return err
 	}
 	defer d.Close()
 	names, err := d.Readdirnames(-1)
 	if err != nil {
-		logError(err)
+		LogError(err)
 		return err
 	}
 	for _, name := range names {
 		err = os.RemoveAll(filepath.Join(dir, name))
 		if err != nil {
-			logError(err)
+			LogError(err)
 			return err
 		}
 	}
 	return nil
-}
-
-func logError(err error) {
-	if err != nil {
-		log.Error(err.Error())
-	}
 }
 
 // DownloadFromUrl downloads target file to destination folder
@@ -308,65 +314,6 @@ func DownloadFromUrlAsync(url, destination string, readBytesChannel chan int64, 
 	return fileName, length, nil
 }
 
-func DownloadFromUrlSilent(url, destination string) (string, error) {
-	var (
-		timeout time.Duration = time.Duration(0)
-		client  http.Client   = http.Client{Timeout: timeout}
-	)
-	//tokenize url
-	tokens := strings.Split(url, "/")
-	//obtain file name
-	fileName := tokens[len(tokens)-1]
-
-	// check maybe downloaded file exists and corrupted
-	fullFileName := filepath.Join(destination, fileName)
-	if _, err := os.Stat(fullFileName); !os.IsNotExist(err) {
-
-		downloadedFileLength, _ := GetFileLength(fullFileName)
-		sourceFileLength, _ := GetHTTPFileLength(url)
-
-		if sourceFileLength != downloadedFileLength && sourceFileLength != 0 {
-			log.Debug("Delete corrupted cached file %s\n", fullFileName)
-			DeleteFile(fullFileName)
-		}
-		// otherwise file has correct length
-	}
-
-	log.Debug("Downloading %s from %s to %s\n", fileName, url, destination)
-
-	//target file does not exist
-	if _, err := os.Stat(fmt.Sprintf("%s/%s", destination, fileName)); os.IsNotExist(err) {
-		//create destination dir
-		CreateDir(destination)
-		//create file
-		output, err := os.Create(fmt.Sprintf("%s/%s", destination, fileName))
-		if err != nil {
-			log.Error("[-] Error creating file ", destination, fileName)
-			return "", err
-		}
-		defer output.Close()
-		response, err := client.Get(url)
-		if err != nil {
-			log.Error("[-] Error while downloading file ", url)
-			return "", err
-		}
-		defer response.Body.Close()
-		bar := pb.New64(response.ContentLength)
-		bar.ShowBar = false
-		prd := bar.NewProxyReader(response.Body)
-		totalCount, err := io.Copy(output, prd)
-		if err != nil {
-			log.Error("error while copying ", err.Error())
-			return "", err
-		}
-		log.Debug("Total number of bytes read: ", totalCount)
-	} else {
-		log.Debug("File exist %s%s\n", destination, fileName)
-	}
-	log.Debug("\nDone")
-	return fileName, nil
-}
-
 func resumeDownloadAsync(dst, url string, ch chan int64, errorChan chan error) {
 	log.Debug("resuming download to ", dst)
 	//resolve redirects to final url
@@ -473,6 +420,7 @@ func GetFinalUrl(url string) (string, error) {
 	return resp.Request.URL.String(), nil
 }
 
+// Downloads From url with retries
 func DownloadFromUrlWithAttempts(url, destination string, retries int) (string, error) {
 	var (
 		err      error
@@ -496,6 +444,7 @@ func DownloadFromUrlWithAttempts(url, destination string, retries int) (string, 
 
 }
 
+// Downloads from the url asynchronously
 func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *sync.WaitGroup) (string, *pb.ProgressBar, error) {
 	var (
 		err                     error
@@ -562,29 +511,7 @@ func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *
 
 }
 
-func DownloadFromUrlWithAttemptsSilent(url, destination string, retries int) (string, error) {
-	var (
-		err      error
-		filename string
-	)
-	for i := 1; i <= retries; i++ {
-		log.Debug("Attempting to download. Trying %d out of %d \n", i, retries)
-		filename, err = DownloadFromUrlSilent(url, destination)
-		if err == nil {
-			break
-		} else {
-			DeleteFile(filepath.Join(destination, filename))
-		}
-	}
-	if err != nil {
-		log.Debug("Could not download from url:%s \n", url)
-		log.Debug("Reported error message:%s\n", err.Error())
-		return "", err
-	}
-	return filename, nil
-
-}
-
+// Unzip into the destination folder
 func Unzip(src, dest string) error {
 	fmt.Printf("[+] Unzipping %s to %s\n", src, dest)
 	tokens := strings.Split(src, "/")
@@ -647,49 +574,33 @@ func Unzip(src, dest string) error {
 	return nil
 }
 
-func AppendToFile(s, target string) {
+// Appends a string to the provided file
+func AppendToFile(s, target string) error {
 	fmt.Printf("[+] Appending %s to %s \n", s, target)
 	fileHandle, err := os.OpenFile(target, os.O_APPEND|os.O_RDWR, 0660)
 	if err != nil {
 		fmt.Printf("[-] Error while appending:%s ", err.Error())
+		return err
 	}
-	n, err := fileHandle.WriteString(s)
-	fileHandle.Close()
-	log.Debug("%d bytes written \n", n)
+	defer fileHandle.Close()
+
+	_, err = fileHandle.WriteString(s)
+	return err
 }
 
-func AppendRewrite(s, target string) {
-	var buf bytes.Buffer
-	file, err := os.Open(target)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		buf.WriteString(scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-	WriteToFile(buf.String()+s, target)
-}
-
+// Writes a string to the provided file
 func WriteToFile(s, target string) error {
 	fileHandle, err := os.OpenFile(target, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0660)
 	if err != nil {
-		fmt.Printf("[-] Error while writing:%s ", err.Error())
 		return err
 	}
 	defer fileHandle.Close()
 	_, err = fileHandle.WriteString(s)
-	if err != nil {
-		fmt.Println("[-] Error while writing to file:", err.Error())
-		return err
-	}
-	return nil
+
+	return err
 }
 
+// Get local interfaces with inited ip
 func LocalIfaces() (i []Iface) {
 	ifaces, err := net.Interfaces()
 	if err != nil {
@@ -721,11 +632,13 @@ func LocalIfaces() (i []Iface) {
 	}
 	return i
 }
+
 func GetIface() Iface {
 	ifaces := LocalIfaces()
 	return ifaces[0]
 }
 
+// Stream easy ssh
 func StreamEasySsh(ip, user, password, port, key, command string, timeout int) (chan string, chan string, chan bool, error) {
 	ssh := &easyssh.MakeConfig{
 		User:     user,
@@ -738,6 +651,7 @@ func StreamEasySsh(ip, user, password, port, key, command string, timeout int) (
 	return ssh.Stream(fmt.Sprintf("sudo %s", command), timeout)
 }
 
+// Scp file
 func ScpWPort(src, dst, ip, port, user, password string) error {
 	ssh := &easyssh.MakeConfig{
 		User:     user,
@@ -747,183 +661,16 @@ func ScpWPort(src, dst, ip, port, user, password string) error {
 		Key:      "~/.ssh/id_rsa.pub",
 	}
 
-	fName := FileName(src)
-
-	err := ssh.Scp(src, fName)
-	if err != nil {
-		fmt.Println("[-] Error uploading file:", err.Error())
-		return err
-	} else {
-		fmt.Println("\n[+] Successfully uploaded file : ", fName)
-		_, err := RunSshWithTimeout(ssh, fmt.Sprintf("sudo mv ~/%s %s", fName, dst), SshExtendedCommandTimeout)
-		if err != nil {
-			fmt.Println("[+] Error moving file: ", err.Error())
-			return err
-		}
-	}
-
-	return nil
+	return ssh.Scp(src, dst+Separators("linux")+FileName(src))
 }
 
-func Scp(src, dst, ip, user, password string) {
-	ScpWPort(src, dst, ip, "22", user, password)
+// Scp file using 22 port
+func Scp(src, dst, ip, user, password string) error {
+	return ScpWPort(src, dst, ip, "22", user, password)
 }
 
-func ScpSilent(src, dst, ip, user, password string) error {
-	ssh := &easyssh.MakeConfig{
-		User:     user,
-		Password: password,
-		Port:     "22",
-		Server:   ip,
-		Key:      "~/.ssh/id_rsa.pub",
-	}
-
-	fileName := FileName(src)
-
-	err := ssh.Scp(src, fileName)
-	if err != nil {
-		return err
-	} else {
-		_, err := RunSshWithTimeout(ssh, fmt.Sprintf("sudo mv ~/%s %s", fileName, dst), SshExtendedCommandTimeout)
-		if err != nil {
-			return errors.New("Error moving file: " + err.Error())
-		}
-	}
-	return nil
-}
-
-func ScpWithoutSudo(src, dst, ip, user, password string) error {
-	ssh := &easyssh.MakeConfig{
-		User:     user,
-		Password: password,
-		Port:     "22",
-		Server:   ip,
-		Key:      "~/.ssh/id_rsa.pub",
-	}
-
-	fileName := FileName(src)
-	err := ssh.Scp(src, fileName)
-	if err != nil {
-		fmt.Println("[-] Error uploading file:", err.Error())
-		return err
-	} else {
-		//tokenize url
-		_, err := RunSshWithTimeout(ssh, fmt.Sprintf("mv ~/%s %s", fileName, dst), SshExtendedCommandTimeout)
-		if err != nil {
-			fmt.Println("[+] Error moving file: ", err.Error())
-			return err
-		}
-	}
-	return nil
-}
-
-func ScpWithPwd(src, dst, ip, user, password string) error {
-	ssh := &easyssh.MakeConfig{
-		User:     user,
-		Password: password,
-		Port:     "22",
-		Server:   ip,
-		Key:      "~/.ssh/id_rsa.pub",
-	}
-
-	fileName := FileName(src)
-	err := ssh.Scp(src, fileName)
-	if err != nil {
-		fmt.Println("[-] Error uploading file:", err.Error())
-		return err
-	} else {
-
-		fmt.Println("\n[+] Successfully uploaded file : ", fileName)
-		_, err := RunSshWithTimeout(ssh, fmt.Sprintf("echo %s | sudo -S mv ~/%s %s", password, fileName, dst), SshExtendedCommandTimeout)
-		if err != nil {
-			fmt.Println("[+] Error moving file: ", err.Error())
-			return err
-		}
-	}
-	return nil
-}
-
-func ScpSilentWithPwd(src, dst, ip, user, password string) error {
-	ssh := &easyssh.MakeConfig{
-		User:     user,
-		Password: password,
-		Port:     "22",
-		Server:   ip,
-		Key:      "~/.ssh/id_rsa.pub",
-	}
-	fileName := FileName(src)
-
-	err := ssh.Scp(src, fileName)
-	if err != nil {
-		return err
-	} else {
-		_, err := RunSshWithTimeout(ssh, fmt.Sprintf("echo %s | sudo -S mv ~/%s %s", password, fileName, dst), SshExtendedCommandTimeout)
-		if err != nil {
-			return errors.New("Error moving file: " + err.Error())
-		}
-	}
-	return nil
-}
-
-func EstablishConnection(ips []string, user, password string) string {
-	if len(ips) > 1 {
-		fmt.Println("[+] More than one IP found")
-		for _, ip := range ips {
-			if EstablishConn(ip, user, password) {
-				return ip
-			}
-		}
-	} else {
-		return ips[0]
-	}
-	return ""
-}
-
-func EstablishConn(ip, user, passwd string) bool {
-	fmt.Printf("[+] Trying to reach %s@%s\n", user, ip)
-	ssh := &easyssh.MakeConfig{
-		User:     user,
-		Server:   ip,
-		Password: passwd,
-		Port:     "22",
-	}
-	resp, err := RunSshWithTimeout(ssh, "whoami", 30)
-	if err != nil {
-		fmt.Printf("[-] Host is unreachable %s@%s\n", user, ip)
-		return false
-	} else {
-		fmt.Println("[+] Command `whoami` result: ", strings.Trim(resp, "\n"))
-		return true
-	}
-	return false
-}
-
-// sudo commands
-func RunSshWithTimeout(ssh *easyssh.MakeConfig, command string, timeout int) (string, error) {
-	type Result struct {
-		Out string
-		Err error
-	}
-
-	resultChan := make(chan Result)
-
-	go func(resultChan chan Result) {
-		out, _, _, err := ssh.Run(fmt.Sprintf("%s", command), SshExtendedCommandTimeout)
-		resultChan <- Result{
-			Out: out,
-			Err: err,
-		}
-	}(resultChan)
-
-	select {
-	case result := <-resultChan:
-		return result.Out, result.Err
-	case <-time.NewTimer(time.Second * time.Duration(timeout)).C:
-		return "", errors.New(fmt.Sprintf("Stopped by timeout %d seconds", timeout))
-	}
-}
-
-func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, sudoPass string, verbose bool, timeout int) (string, error) {
+// Generic command run over ssh, which configures ssh detail and calls RunSshWithTimeout method
+func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verbose bool, timeout int) (string, error) {
 	ssh := &easyssh.MakeConfig{
 		User:     user,
 		Password: password,
@@ -936,38 +683,53 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, sudo
 		command = "sudo " + command
 	}
 
-	if sudo && sudoPass != "" {
-		command = fmt.Sprintf("echo %s | sudo -S %s", sudoPass, command)
+	if sudo && password != "" {
+		command = fmt.Sprintf("echo %s | sudo -S %s", password, command)
 	}
 
 	if verbose {
 		fmt.Printf("[+] Executing %s %s@%s\n", fmt.Sprintf("sudo %s", command), user, ip)
 	}
 
-	out, err := RunSshWithTimeout(ssh, fmt.Sprintf("sudo %s", command), timeout)
-	if err != nil {
-		fmt.Println("[-] Error running command : ", command, " err msg:", err.Error())
-		return out, err
+	out, eut, t, err := ssh.Run("sleep 20", 2)
+
+	if !t {
+		fmt.Println("[-] Timeout running command : ", command)
+		answ := dialogs.YesNoDialog("[?] Would you like to re-run with extended timeout? ")
+
+		if answ {
+			out, eut, t, err = ssh.Run(command, SshExtendedCommandTimeout)
+
+			if !t {
+				fmt.Println("[-] Timeout running command : ", command)
+				return out, errors.New(eut)
+			}
+		}
 	}
+
+	if err != nil {
+		fmt.Println("[-] Error running command : ", command, " err msg:", eut)
+	}
+
 	return out, nil
 }
 
-func RunSudoOverSshTimeout(command, ip, user, password string, verbose bool, timeout int) (string, error) {
-	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, true, "", verbose, timeout)
+// Run ssh echo password | sudo command with timeout
+func RunSudoOverSshTimeout(command, ip, user, password string, timeout int) (string, error) {
+	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, true, false, timeout)
 }
 
+// Run ssh echo password | sudo command
 func RunSudoOverSsh(command, ip, user, password string, verbose bool) (string, error) {
-	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, true, "", verbose, SshCommandTimeout)
+	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, true, verbose, SshCommandTimeout)
 }
 
+// Run ssh command
 func RunOverSsh(command, ip, user, password string) (string, error) {
-	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, false, "", false, SshCommandTimeout)
+	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, false, false, SshCommandTimeout)
 }
 
-func RunOverSshWithPwd(command, ip, user, password string) (string, error) {
-	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, true, password, false, SshCommandTimeout)
-}
-
+// Copy a file
 func Copy(src, dst string) error {
 	sourcefile, err := os.Open(src)
 	if err != nil {
@@ -979,59 +741,55 @@ func Copy(src, dst string) error {
 		return err
 	}
 	defer destfile.Close()
-	_, err = io.Copy(destfile, sourcefile)
-	if err == nil {
-		sourceInfo, err := os.Stat(src)
-		if err != nil {
-			err = os.Chmod(dst, sourceInfo.Mode())
-		}
+
+	if _, err = io.Copy(destfile, sourcefile); err != nil {
+		return err
 	}
-	return nil
+	sourceInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, sourceInfo.Mode())
 }
 
+// Copy a directory recursively
 func CopyDir(src, dst string) error {
 	// get properties of source dir
-	sourceinfo, err := os.Stat(src)
+	sourceInfo, err := os.Stat(src)
 	if err != nil {
 		return err
 	}
 	// create dest dir
-	err = os.MkdirAll(dst, sourceinfo.Mode())
-	if err != nil {
+	if err = os.MkdirAll(dst, sourceInfo.Mode()); err != nil {
 		return err
 	}
+
 	directory, _ := os.Open(src)
+	defer directory.Close()
+
 	objects, err := directory.Readdir(-1)
 	for _, obj := range objects {
-		srcp := src + "/" + obj.Name()
-		dstp := dst + "/" + obj.Name()
+		srcp := src + Separator() + obj.Name()
+		dstp := dst + Separator() + obj.Name()
 		if obj.IsDir() {
-			// create sub-directories - recursively
+			// create sub-directories recursively
 			err = CopyDir(srcp, dstp)
 			if err != nil {
 				fmt.Println(err)
 			}
-		} else {
-			// perform copy
-			err = Copy(srcp, dstp)
-			if err != nil {
-				fmt.Println(err)
-			}
+			continue
+		}
+
+		// perform copy
+		err = Copy(srcp, dstp)
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
 	return nil
 }
 
-func CheckRoot() bool {
-	user, _ := user.Current()
-	if user.Username != "root" {
-		fmt.Println("Warning: current user doesn't have root access\nuse \"sudo\"")
-		return false
-	}
-
-	return true
-}
-
+// Returns an absolute path of the path
 func Abs(path string) string {
 	abs, err := filepath.Abs(path)
 	if err != nil {
@@ -1041,6 +799,7 @@ func Abs(path string) string {
 	return abs
 }
 
+// Returns a default bin path
 func GetBinPath() string {
 	switch runtime.GOOS {
 	case "linux":
@@ -1064,7 +823,7 @@ func DirExists(path string) (bool, error) {
 	return true, err
 }
 
-// return true if file is writable by owner
+// return true if the given file is writable/readable/executable using the given mask by an owner
 func FileModeMask(name string, mask os.FileMode) (bool, error) {
 	fi, err := os.Stat(name)
 	if err != nil {
@@ -1074,7 +833,8 @@ func FileModeMask(name string, mask os.FileMode) (bool, error) {
 	return fi.Mode()&mask == mask, nil
 }
 
-func InputPassword(data interface{}) string {
+// Masks a password input pausing a bool channel
+func InputMaskedPassword(data interface{}) string {
 	ch, _ := data.(chan bool)
 
 	if ch != nil {
@@ -1091,6 +851,7 @@ func InputPassword(data interface{}) string {
 	return string(pass)
 }
 
+// Gets an exit code from the error
 func CommandExitCode(e error) (int, error) {
 	if ee, ok := e.(*exec.ExitError); ok {
 		if ws, ok := ee.Sys().(syscall.WaitStatus); ok {
@@ -1101,13 +862,14 @@ func CommandExitCode(e error) (int, error) {
 	return 0, errors.New("Wrong error type")
 }
 
+// Gets a filename from the path
 func FileName(path string) string {
 	split := strings.Split(path, string(os.PathSeparator))
 	name := split[len(split)-1]
 	return name
 }
 
-func StringInSlice(a string, list []string) bool {
+func StringToSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
 			return true
@@ -1117,6 +879,7 @@ func StringInSlice(a string, list []string) bool {
 	return false
 }
 
+// Shows the message and rotates a spinner while `progress` is true and isn't closed
 func WaitAndSpin(message string, progress chan bool) {
 	s := spin.New()
 	s.Set(spin.Spin1)
@@ -1124,17 +887,16 @@ func WaitAndSpin(message string, progress chan bool) {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
 
-	prompt := true
 	spinEn := true
+	ok := false
 
-	var ok bool
-
-	for prompt {
+Loop:
+	for {
 		select {
 		case spinEn, ok = <-progress:
 			if !ok {
 				fmt.Print("\n")
-				prompt = false
+				break Loop
 			}
 		case <-ticker.C:
 			if spinEn {
@@ -1144,11 +906,18 @@ func WaitAndSpin(message string, progress chan bool) {
 	}
 }
 
+// Logs an error if any
+func LogError(err error) {
+	if err != nil {
+		log.Error(err.Error())
+	}
+}
+
+// Exits with the code 1 in case of any error
 func ExitOnError(err error) {
 	if err != nil {
-		log.Error("erro msg:", err.Error())
 		fmt.Println("[-] Error: ", err.Error())
-		fmt.Println("[-] Exiting with exit status 1 ...")
-		os.Exit(1)
+		fmt.Println("[-] Exiting ... ")
+		log.Fatal("erro msg:", err.Error())
 	}
 }
