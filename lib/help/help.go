@@ -943,7 +943,7 @@ func EstablishConn(ip, user, passwd string) bool {
 	}
 	resp, eut, t, err := ssh.Run("whoami", SshCommandTimeout)
 	if err != nil || !t {
-		fmt.Printf("[-] Host is unreachable %s@%s\n", user, ip, " err: ", eut)
+		fmt.Printf("[-] Host is unreachable %s@%s err:%s\n", user, ip, eut)
 		return false
 	} else {
 		fmt.Println("[+] Command `whoami` result: ", strings.Trim(resp, "\n"))
