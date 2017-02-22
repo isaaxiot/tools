@@ -24,7 +24,7 @@ import (
 	"github.com/howeyc/gopass"
 	"github.com/hypersleep/easyssh"
 	"github.com/tj/go-spin"
-	"github.com/xshellinc/isaax-cli/dialogs"
+	"github.com/xshellinc/tools/dialogs"
 	"github.com/xshellinc/tools/lib/sudo"
 	pb "gopkg.in/cheggaaa/pb.v1"
 )
