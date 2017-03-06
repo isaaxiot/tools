@@ -1,14 +1,12 @@
 package constants
 
 import (
-	"regexp"
 	"errors"
+	"regexp"
 )
 
-
 //@todo check and update list
-const Locale =
-`aa_DJ ISO-8859-1
+const Locale = `aa_DJ ISO-8859-1
 aa_DJ.UTF-8 UTF-8
 aa_ER UTF-8
 aa_ER@saaho UTF-8
@@ -490,7 +488,7 @@ zu_ZA ISO-8859-1
 zu_ZA.UTF-8 UTF-8`
 
 func GetLocale(l string) ([]string, error) {
-	match, err := regexp.Compile("(?im)^"+l+".*")
+	match, err := regexp.Compile("(?im)^" + l + ".*")
 
 	if err != nil {
 		return nil, err
@@ -502,6 +500,10 @@ func GetLocale(l string) ([]string, error) {
 		return nil, errors.New("No such locale")
 	}
 
-
 	return matches, nil
+}
+
+func ValidateLocale(l string) error {
+	_, err := GetLocale(l)
+	return err
 }

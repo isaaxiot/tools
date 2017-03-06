@@ -66,7 +66,7 @@ const (
 		"netmask %s\n" +
 		"network %s\n" +
 		"gateway %s\n" +
-		"dns-nameservers %s\n" +
+		"dns-nameservers %s 8.8.8.8\n" +
 		"\n" +
 		"iface default inet dhcp\n"
 

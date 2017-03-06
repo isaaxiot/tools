@@ -21,7 +21,6 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/howeyc/gopass"
 	"github.com/hypersleep/easyssh"
 	"github.com/tj/go-spin"
 	"github.com/xshellinc/isaax-cli/dialogs"
@@ -67,6 +66,14 @@ func Separators(os string) string {
 	default:
 		return ""
 	}
+}
+
+func ExecStandardStd(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	return cmd.Run()
 }
 
 // Executes commands via sudo
@@ -841,24 +848,6 @@ func FileModeMask(name string, mask os.FileMode) (bool, error) {
 	}
 
 	return fi.Mode()&mask == mask, nil
-}
-
-// Masks a password input pausing a bool channel
-func InputMaskedPassword(data interface{}) string {
-	ch, _ := data.(chan bool)
-
-	if ch != nil {
-		ch <- false
-	}
-
-	fmt.Print("\033[K1\r[+] Enter Password: ")
-	pass, _ := gopass.GetPasswdMasked()
-
-	if ch != nil {
-		ch <- true
-	}
-
-	return string(pass)
 }
 
 // Gets an exit code from the error

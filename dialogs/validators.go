@@ -11,33 +11,44 @@ import (
 type ValidatorFn func(input string) bool
 
 // return true if string is not empty and valid, false otherwise
-func EmptyStringValidator(input string) bool {
-	input = strings.TrimSpace(input)
-	if input == "" {
-		fmt.Println("[-] Empty input")
+func EmptyStringValidator(inp string) bool {
+	if inp == "" {
+		fmt.Print("[-] Empty input, please repeat:")
 		return false
 	}
 	return true
 }
 
 // return true if parsed IP is not nil, false otherwise
-func IpAddressValidator(ipAddress string) bool {
-	fmt.Println("[+] Validating IP address:", ipAddress)
-	ipAddress = strings.TrimSpace(ipAddress)
+func IpAddressValidator(inp string) bool {
+	fmt.Println("[+] Validating IP address:", inp)
+
 	re, _ := regexp.Compile(`^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`)
-	if re.MatchString(ipAddress) {
+	if re.MatchString(inp) {
 		return true
 	}
-	fmt.Println("[-] Not valid IP address")
+	fmt.Print("[-] Not valid IP address, please repeat:")
 	return false
 }
 
-func YesNoValidator(answer string) bool {
-	if strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes") ||
-		strings.EqualFold(answer, "n") || strings.EqualFold(answer, "no") {
+func YesNoValidator(inp string) bool {
+	if strings.EqualFold(inp, "y") || strings.EqualFold(inp, "yes") ||
+		strings.EqualFold(inp, "n") || strings.EqualFold(inp, "no") {
 		return true
 	} else {
-		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m)")
+		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m):")
 		return false
+	}
+}
+
+func CreateValidatorFn(fn func(string) error) ValidatorFn {
+	return func(input string) bool {
+		err := fn(input)
+		if err != nil {
+			fmt.Println("[-] ", err)
+			return false
+		}
+
+		return true
 	}
 }
