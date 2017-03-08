@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	sudoBinary     = "sudo"
-	passwordPrompt = "_"
+	sudoBinary = "sudo"
+	// prompt must be unambiguous!
+	passwordPrompt = "___"
 	readBufSz      = 8 * 1024
 )
 

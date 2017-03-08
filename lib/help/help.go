@@ -34,6 +34,11 @@ type Iface struct {
 	Ipv4         string
 }
 
+type BackgroundJob struct {
+	Progress chan bool
+	Err      chan error
+}
+
 const (
 	SshExtendedCommandTimeout = 300
 	SshCommandTimeout         = 30
@@ -903,6 +908,58 @@ Loop:
 			}
 		}
 	}
+}
+
+// TODO should replace WaitAndSpin
+func NewBackgroundJob() *BackgroundJob {
+	return &BackgroundJob{
+		Progress: make(chan bool),
+		Err:      make(chan error),
+	}
+}
+
+func (b *BackgroundJob) Error(err error) {
+	b.Err <- err
+}
+
+func (b *BackgroundJob) Active(active bool) {
+	b.Progress <- active
+}
+
+func (b *BackgroundJob) Close() {
+	close(b.Progress)
+}
+
+func WaitJobAndSpin(message string, job *BackgroundJob) (err error) {
+	s := spin.New()
+	s.Set(spin.Spin1)
+
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
+
+	spinEn := true
+	ok := false
+
+Loop:
+	for {
+		select {
+		case spinEn, ok = <-job.Progress:
+			if !ok {
+				fmt.Print("\n")
+				break Loop
+			}
+		case err = <-job.Err:
+			fmt.Print("\n")
+			break Loop
+
+		case <-ticker.C:
+			if spinEn {
+				fmt.Printf("\r[+] %s: %s ", message, s.Next())
+			}
+		}
+	}
+
+	return
 }
 
 // Logs an error if any
