@@ -25,7 +25,7 @@ func (d *DialogHandler) GetRead() io.Reader {
 	return d.Reader
 }
 
-func GetSingleAnswer(question string, validators []ValidatorFn) string {
+func GetSingleAnswer(question string, validators ...ValidatorFn) string {
 	reader := bufio.NewReader(Handler.GetRead())
 	retries := 3
 	fmt.Print("[?] ", question)
@@ -100,7 +100,7 @@ Loop:
 }
 
 func YesNoDialog(question string) bool {
-	answer := GetSingleAnswer(question+" (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m):", []ValidatorFn{YesNoValidator})
+	answer := GetSingleAnswer(question+" (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m):", YesNoValidator)
 	return strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes")
 }
 

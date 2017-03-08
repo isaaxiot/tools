@@ -42,13 +42,31 @@ func YesNoValidator(inp string) bool {
 }
 
 func CreateValidatorFn(fn func(string) error) ValidatorFn {
-	return func(input string) bool {
-		err := fn(input)
+	return func(inp string) bool {
+		err := fn(inp)
 		if err != nil {
 			fmt.Println("[-] ", err)
 			return false
 		}
 
 		return true
+	}
+}
+
+func SpecialCharacterValidator(str string, cond bool) ValidatorFn {
+	return func(inp string) bool {
+		r, err := regexp.Compile(`[` + str + `]`)
+
+		if err != nil {
+			fmt.Println("[-] ", err)
+			return false
+		}
+
+		c := r.Match([]byte(inp))
+		if (c || cond) && !(c && cond) {
+			return true
+		}
+
+		return false
 	}
 }

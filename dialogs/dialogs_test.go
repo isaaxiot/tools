@@ -37,7 +37,6 @@ func initDialogHandler(a *assert.Assertions, s string) *os.File {
 }
 
 func TestYesNoDialog(t *testing.T) {
-	t.Skip()
 	inps := [5]string{
 		"y\n",
 		"n\n",
@@ -82,7 +81,7 @@ func TestGetSingleAnswer(t *testing.T) {
 	_, err := in.Seek(0, os.SEEK_SET)
 	a.NoError(err, "Error running test, TempFile.Seek")
 
-	a.Equal(param, GetSingleAnswer("", nil))
+	a.Equal(param, GetSingleAnswer(""))
 }
 
 func TestGetSingleAnswer2(t *testing.T) {
@@ -96,7 +95,7 @@ func TestGetSingleAnswer2(t *testing.T) {
 	_, err := in.Seek(0, os.SEEK_SET)
 	a.NoError(err, "Error running test, TempFile.Seek")
 
-	a.Equal(param, GetSingleAnswer("", []ValidatorFn{EmptyStringValidator, IpAddressValidator}))
+	a.Equal(param, GetSingleAnswer("", EmptyStringValidator, IpAddressValidator))
 }
 
 func TestSelectOneDialog(t *testing.T) {
@@ -192,4 +191,25 @@ func TestDialogHandler_GetRead(t *testing.T) {
 	a := assert.New(t)
 	o := DialogHandler{}
 	a.Equal(os.Stdin, o.GetRead())
+}
+
+func TestSpecialCharacterValidator(t *testing.T) {
+	a := assert.New(t)
+	fn := SpecialCharacterValidator("/*/^", false)
+
+	a.Equal(true, fn("a*fb"))
+	a.Equal(true, fn("a*^b"))
+	a.Equal(true, fn("*^"))
+	a.Equal(true, fn("a^asdf^^^"))
+	a.Equal(true, fn("a^asdf^^^"))
+	a.Equal(false, fn("textaasdf"))
+
+	fn = SpecialCharacterValidator("/*/^", true)
+
+	a.Equal(false, fn("a*fb"))
+	a.Equal(false, fn("a*^b"))
+	a.Equal(false, fn("*^"))
+	a.Equal(false, fn("a^asdf^^^"))
+	a.Equal(false, fn("a^asdf^^^"))
+	a.Equal(true, fn("textaasdf"))
 }
