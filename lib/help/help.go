@@ -717,7 +717,7 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verb
 	out, eut, t, err := ssh.Run(command, timeout)
 	if !t {
 		fmt.Println("[-] Timeout running command : ", command)
-		answ := dialogs.YesNoDialog("[?] Would you like to re-run with extended timeout? ")
+		answ := dialogs.YesNoDialog("Would you like to re-run with extended timeout? ")
 
 		if answ {
 			out, eut, t, err = ssh.Run(command, SshExtendedCommandTimeout)
