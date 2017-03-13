@@ -7,7 +7,7 @@ const (
 	ARMv6               = "armv6"
 	ARMv7               = "armv7"
 	ARMv8               = "armv8"
-	ARM64               = "armv64"
+	ARM64               = "arm64"
 	OS_LINUX            = "linux"
 	TMP_DIR             = "/tmp/"
 	DEVICE_TYPE_UNKNOWN = "unknown"

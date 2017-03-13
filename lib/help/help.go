@@ -613,40 +613,44 @@ func WriteToFile(s, target string) error {
 }
 
 // Get local interfaces with inited ip
-func LocalIfaces() (i []Iface) {
+func LocalIfaces() ([]Iface, error) {
+	var i = make([]Iface, 1)
+
 	ifaces, err := net.Interfaces()
+
 	if err != nil {
-		fmt.Println("[-] Error while getting hardware ifaces:", err.Error())
-		return nil
+		return nil, err
 	}
+
 	for _, iface := range ifaces {
-		var (
-			ip   net.IP
-			face Iface
-		)
 		addrs, _ := iface.Addrs()
 		for _, addr := range addrs {
+
+			var (
+				ip   net.IP
+				face Iface
+			)
+
 			switch v := addr.(type) {
 			case *net.IPNet:
 				ip = v.IP
 			case *net.IPAddr:
 				ip = v.IP
 			}
-			if !ip.IsLoopback() {
-				if ip.To4() != nil {
-					face.Ipv4 = ip.To4().String()
-					face.HardwareAddr = iface.HardwareAddr.String()
-					face.Name = iface.Name
-					i = append(i, face)
-				}
+			if !ip.IsLoopback() && ip.To4() != nil {
+				face.Ipv4 = ip.To4().String()
+				face.HardwareAddr = iface.HardwareAddr.String()
+				face.Name = iface.Name
+				i = append(i, face)
 			}
 		}
 	}
-	return i
+
+	return i, nil
 }
 
 func GetIface() Iface {
-	ifaces := LocalIfaces()
+	ifaces, _ := LocalIfaces()
 	return ifaces[0]
 }
 
