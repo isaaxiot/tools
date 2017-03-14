@@ -20,6 +20,9 @@ import (
 	"syscall"
 	"time"
 
+	"crypto/md5"
+	"encoding/hex"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/hypersleep/easyssh"
 	"github.com/tj/go-spin"
@@ -614,7 +617,7 @@ func WriteToFile(s, target string) error {
 
 // Get local interfaces with inited ip
 func LocalIfaces() ([]Iface, error) {
-	var i = make([]Iface, 1)
+	var i = make([]Iface, 0)
 
 	ifaces, err := net.Interfaces()
 
@@ -1000,4 +1003,22 @@ func EstablishConn(ip, user, passwd string) bool {
 		return true
 	}
 	return false
+}
+
+func HashFileMD5(filePath string) (string, error) {
+	var r string
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return r, err
+	}
+	defer file.Close()
+
+	hash := md5.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return r, err
+	}
+
+	return hex.EncodeToString(hash.Sum(nil)[:16]), nil
+
 }
