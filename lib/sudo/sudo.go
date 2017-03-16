@@ -1,7 +1,6 @@
 package sudo
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"os/exec"
@@ -44,7 +43,6 @@ func Exec(cb PasswordCallback, cbData interface{}, script ...string) ([]byte, []
 	cmdOutput := &bytes.Buffer{}
 
 	cmd.Stdout = cmdOutput
-	stderrBuf := bufio.NewReader(stderr)
 
 	err = cmd.Start()
 	if err != nil {
@@ -59,23 +57,25 @@ func Exec(cb PasswordCallback, cbData interface{}, script ...string) ([]byte, []
 
 		for {
 			// read into the buffer from stdErr
-			n, err := stderrBuf.Read(buf)
+			n, err := stderr.Read(buf)
 			if err != nil || n == 0 {
 				return
 			}
+
 			// copy the error's output
-			errOutput = make([]byte, n)
-			copy(errOutput, buf[:n])
+			errOutput = append(errOutput, buf[:n]...)
 
 			// check if stdErr contains the promt
-			if bytes.Equal(buf[n-len(passwordPrompt):n], []byte(passwordPrompt)) {
+			if len(errOutput) >= len(passwordPrompt) &&
+				bytes.Equal(errOutput[len(errOutput)-len(passwordPrompt):], []byte(passwordPrompt)) {
+
+				// trim prompt
+				errOutput = errOutput[:len(errOutput)-len(passwordPrompt)]
 
 				pwd := cb(cbData)
 
 				if _, err = fmt.Fprintln(stdin, pwd); err != nil {
-					err := []byte(err.Error())
-					errOutput = make([]byte, len(err))
-					copy(errOutput, err)
+					errOutput = []byte(err.Error())
 					return
 				}
 			}
