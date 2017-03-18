@@ -42,18 +42,16 @@ const (
 		"auto lo\n" +
 		"iface lo inet loopback\n" +
 		"\n" +
-		"auto wlan0\n" +
+		"iface eth0 inet manual\n" +
+		"\n" +
+		"allow-hotplug wlan0\n" +
 		"iface wlan0 inet static\n" +
 		"address %s\n" +
 		"netmask %s\n" +
 		"network %s\n" +
 		"gateway %s\n" +
 		"dns-nameservers %s\n" +
-		"\n" +
-		"pre-up sh -c \"sleep 10\"\n" +
-		"\n" +
-		"wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf\n" +
-		"iface default inet dhcp\n"
+		"wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf\n"
 
 	INTERFACE_ETH string = "source-directory /etc/network/interfaces.d\n" +
 		"\n" +
