@@ -6,7 +6,6 @@ const (
 	ARMv5               = "armv5"
 	ARMv6               = "armv6"
 	ARMv7               = "armv7"
-	ARMv8               = "armv8"
 	ARM64               = "arm64"
 	OS_LINUX            = "linux"
 	TMP_DIR             = "/tmp/"
@@ -26,7 +25,7 @@ const (
 	DEFAULT_EDISON_IP     = "192.168.2.15"
 
 	DEFAULT_RASPBERRY_USERNAME  = "pi"
-	DEFAULT_RASPBERRY_PASSWORD  = "password"
+	DEFAULT_RASPBERRY_PASSWORD  = "raspberry"
 	DEFAULT_NANOPI_USERNAME     = "root"
 	DEFAULT_NANOPI_PASSWORD     = "fa"
 	DEFAULT_BEAGLEBONE_USERNAME = "ubuntu"
