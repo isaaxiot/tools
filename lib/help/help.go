@@ -688,7 +688,7 @@ func ScpWPort(src, dst, ip, port, user, password string) error {
 		return err
 	}
 
-	out, err := GenericRunOverSsh(fmt.Sprintf("mv ~/%s %s", fileName, dst), ip, user, password, port, false, false, SshCommandTimeout)
+	out, err := GenericRunOverSsh(fmt.Sprintf("mv ~/%s %s", fileName, dst), ip, user, password, port, true, false, SshCommandTimeout)
 	if err != nil {
 		return errors.New(out)
 	}
