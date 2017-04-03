@@ -69,10 +69,10 @@ func Separator() string {
 // Returns Os dependent separator
 func Separators(os string) string {
 	switch os {
-	case "linux":
-		return string(filepath.Separator)
+	case "windows":
+		return "//"
 	default:
-		return ""
+		return "/"
 	}
 }
 
@@ -657,6 +657,8 @@ func GetIface() Iface {
 	return ifaces[0]
 }
 
+/// ------------------- deprecated start =====================
+
 // Stream easy ssh
 func StreamEasySsh(ip, user, password, port, key, command string, timeout int) (chan string, chan string, chan bool, error) {
 	ssh := &easyssh.MakeConfig{
@@ -686,7 +688,7 @@ func ScpWPort(src, dst, ip, port, user, password string) error {
 		return err
 	}
 
-	out, err := GenericRunOverSsh(fmt.Sprintf("mv ~/%s %s", fileName, dst), ip, user, password, port, true, false, SshCommandTimeout)
+	out, err := GenericRunOverSsh(fmt.Sprintf("mv ~/%s %s", fileName, dst), ip, user, password, port, false, false, SshCommandTimeout)
 	if err != nil {
 		return errors.New(out)
 	}
@@ -714,20 +716,20 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verb
 	//}
 
 	if sudo && password != "" {
-		command = fmt.Sprintf("echo %s | sudo -S %s", password, command)
+		command = fmt.Sprintf("sudo -S %s", command)
 	}
 
 	if verbose {
-		fmt.Printf("[+] Executing %s %s@%s\n", fmt.Sprintf("sudo %s", command), user, ip)
+		fmt.Printf("[+] Executing %s %s@%s\n", command, user, ip)
 	}
 
-	out, eut, t, err := ssh.Run(command, timeout)
+	out, eut, t, err := ssh.Run(fmt.Sprintf("echo %s | %s", password, command), timeout)
 	if !t {
 		fmt.Println("[-] Timeout running command : ", command)
 		answ := dialogs.YesNoDialog("Would you like to re-run with extended timeout? ")
 
 		if answ {
-			out, eut, t, err = ssh.Run(command, SshExtendedCommandTimeout)
+			out, eut, t, err = ssh.Run(fmt.Sprintf("echo %s | %s", password, command), SshExtendedCommandTimeout)
 
 			if !t {
 				fmt.Println("[-] Timeout running command : ", command)
@@ -757,6 +759,8 @@ func RunSudoOverSsh(command, ip, user, password string, verbose bool) (string, e
 func RunOverSsh(command, ip, user, password string) (string, error) {
 	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, false, false, SshCommandTimeout)
 }
+
+/// ------------------- deprecated end =====================
 
 // Copy a file
 func Copy(src, dst string) error {
@@ -1020,5 +1024,4 @@ func HashFileMD5(filePath string) (string, error) {
 	}
 
 	return hex.EncodeToString(hash.Sum(nil)[:16]), nil
-
 }
