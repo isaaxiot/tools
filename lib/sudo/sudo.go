@@ -86,9 +86,5 @@ func Exec(cb PasswordCallback, cbData interface{}, script ...string) ([]byte, []
 	// wait for the routine's exit
 	<-sem
 
-	if err != nil {
-		return cmdOutput.Bytes(), errOutput, err
-	}
-
 	return cmdOutput.Bytes(), errOutput, nil
 }
