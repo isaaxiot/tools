@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	readBufSz = 10
+	readBufSz = 1024 * 512
 )
 
 // Util is a ssh utility to scp run and stream commands/files
@@ -102,6 +102,7 @@ func (s *config) Stream(command string) (chan string, chan string, chan bool, er
 	return s.SSH.Stream(command, s.timer)
 }
 
+// ScpFromServer copies a file from remote server using readBufSz buffer
 func (s *config) ScpFromServer(src, dst string) error {
 	f, err := os.Create(dst)
 	if err != nil {
