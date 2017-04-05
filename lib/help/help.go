@@ -3,6 +3,8 @@ package help
 import (
 	"archive/zip"
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -19,9 +21,6 @@ import (
 	"sync"
 	"syscall"
 	"time"
-
-	"crypto/md5"
-	"encoding/hex"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/hypersleep/easyssh"
@@ -70,10 +69,21 @@ func Separator() string {
 func Separators(os string) string {
 	switch os {
 	case "windows":
-		return "//"
+		return "\\"
 	default:
+		fallthrough
+	case "unix":
 		return "/"
 	}
+}
+
+func AddPathSuffix(path, suffix, os string) string {
+	s := Separators(os)
+	if strings.HasSuffix(path, s) {
+		return path + suffix
+	}
+
+	return path + s + suffix
 }
 
 func ExecStandardStd(name string, args ...string) error {
