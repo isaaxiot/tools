@@ -22,6 +22,8 @@ import (
 	"syscall"
 	"time"
 
+	"io/ioutil"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/hypersleep/easyssh"
 	"github.com/tj/go-spin"
@@ -30,22 +32,23 @@ import (
 	pb "gopkg.in/cheggaaa/pb.v1"
 )
 
+// Iface represents an entity with interfaceName hardware and ipv4
 type Iface struct {
 	Name         string
 	HardwareAddr string
 	Ipv4         string
 }
 
+// BackgroundJob contains 2 chans errors and progress indicating if task is in progress
 type BackgroundJob struct {
 	Progress chan bool
 	Err      chan error
 }
 
+// Timeouts
 const (
 	SshExtendedCommandTimeout = 300
 	SshCommandTimeout         = 30
-
-	DefaultSshPort = "22"
 )
 
 // Gets homedir based on Os
@@ -60,12 +63,60 @@ func UserHomeDir() string {
 	return os.Getenv("HOME")
 }
 
-// Returns the string separator
+// Returns extract command based on the filename
+func GetExtractCommand(file string) string {
+	if HasAnySuffixes(file, ".tar.gz", ".tgz", ".tar.bz2", ".tbz", ".tar.xz") {
+		return "tar xvf %s -C %s"
+	}
+	if strings.HasSuffix(file, "img.xz") {
+		file = file[:len(file)-3]
+		return "xz -dc %s > %s" + file + " && echo " + file
+	}
+	if strings.HasSuffix(file, ".zip") {
+		return "unzip -o %s -d %s"
+	}
+
+	return ""
+}
+
+// HasAnySuffixes returns true if file contains any of the supplied suffixes
+func HasAnySuffixes(file string, suffix ...string) bool {
+	for _, s := range suffix {
+		if strings.HasSuffix(file, s) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// DeleteHost deletes host from ssh file or any other provided
+func DeleteHost(fileName, host string) error {
+	result := []string{}
+	input, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(string(input), "\n")
+	for _, line := range lines {
+		if !strings.Contains(line, host) {
+			result = append(result, line)
+		}
+	}
+	output := strings.Join(result, "\n")
+
+	if err = ioutil.WriteFile(fileName, []byte(output), 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Separator returns the string separator
 func Separator() string {
 	return string(filepath.Separator)
 }
 
-// Returns Os dependent separator
+// Separators returns Os dependent separator
 func Separators(os string) string {
 	switch os {
 	case "windows":
@@ -77,6 +128,7 @@ func Separators(os string) string {
 	}
 }
 
+// AddPathSuffix joins path parts based on the OS
 func AddPathSuffix(os, path string, suffixes ...string) string {
 	s := Separators(os)
 
@@ -91,6 +143,7 @@ func AddPathSuffix(os, path string, suffixes ...string) string {
 	return path
 }
 
+// ExecStandardStd executes standard command and all in and out channels are redirected to os (i.e. os.Stdout..)
 func ExecStandardStd(name string, args ...string) error {
 	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout
@@ -762,17 +815,17 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verb
 
 // Run ssh echo password | sudo command with timeout
 func RunSudoOverSshTimeout(command, ip, user, password string, timeout int) (string, error) {
-	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, true, false, timeout)
+	return GenericRunOverSsh(command, ip, user, password, "22", true, false, timeout)
 }
 
 // Run ssh echo password | sudo command
 func RunSudoOverSsh(command, ip, user, password string, verbose bool) (string, error) {
-	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, true, verbose, SshCommandTimeout)
+	return GenericRunOverSsh(command, ip, user, password, "22", true, verbose, SshCommandTimeout)
 }
 
 // Run ssh command
 func RunOverSsh(command, ip, user, password string) (string, error) {
-	return GenericRunOverSsh(command, ip, user, password, DefaultSshPort, false, false, SshCommandTimeout)
+	return GenericRunOverSsh(command, ip, user, password, "22", false, false, SshCommandTimeout)
 }
 
 /// ------------------- deprecated end =====================
@@ -1024,6 +1077,7 @@ func EstablishConn(ip, user, passwd string) bool {
 	return false
 }
 
+// HashFileMD5 returns md5 hash for a specified file
 func HashFileMD5(filePath string) (string, error) {
 	var r string
 
