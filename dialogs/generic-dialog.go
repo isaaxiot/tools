@@ -75,7 +75,7 @@ Loop:
 			fmt.Print("[?] Please repeat: ")
 			continue
 		}
-
+		inp = strings.TrimSpace(inp)
 		num, err := strconv.Atoi(inp)
 		if err != nil {
 			log.Error(err.Error())
