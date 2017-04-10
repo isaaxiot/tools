@@ -77,13 +77,18 @@ func Separators(os string) string {
 	}
 }
 
-func AddPathSuffix(path, suffix, os string) string {
+func AddPathSuffix(os, path string, suffixes ...string) string {
 	s := Separators(os)
-	if strings.HasSuffix(path, s) {
-		return path + suffix
+
+	for _, suffix := range suffixes {
+		if strings.HasSuffix(path, s) {
+			path = path + strings.TrimPrefix(suffix, s)
+		} else {
+			path = path + s + strings.TrimPrefix(suffix, s)
+		}
 	}
 
-	return path + s + suffix
+	return path
 }
 
 func ExecStandardStd(name string, args ...string) error {

@@ -64,7 +64,7 @@ func (s *config) SetTimeout(timeout int) {
 func (s *config) Scp(src string, dst string) error {
 	fileName := help.FileName(src)
 
-	err := s.SSH.Scp(src, help.AddPathSuffix(dst, fileName, "unix"))
+	err := s.SSH.Scp(src, help.AddPathSuffix("unix", dst, fileName))
 	if err == nil {
 		return nil
 	}

@@ -14,7 +14,7 @@ func WiFiPassword() string {
 	for retries > 0 {
 		retries--
 
-		fmt.Print("[+] WIFI password: ")
+		fmt.Print("[?] WIFI password: ")
 		pass, err := gopass.GetPasswdMasked()
 
 		if err != nil {

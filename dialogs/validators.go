@@ -13,7 +13,7 @@ type ValidatorFn func(input string) bool
 // return true if string is not empty and valid, false otherwise
 func EmptyStringValidator(inp string) bool {
 	if inp == "" {
-		fmt.Print("[-] Empty input, please repeat:")
+		fmt.Print("[-] Empty input, please repeat: ")
 		return false
 	}
 	return true
@@ -27,7 +27,7 @@ func IpAddressValidator(inp string) bool {
 	if re.MatchString(inp) {
 		return true
 	}
-	fmt.Print("[-] Not valid IP address, please repeat:")
+	fmt.Print("[-] Not valid IP address, please repeat: ")
 	return false
 }
 
@@ -36,7 +36,7 @@ func YesNoValidator(inp string) bool {
 		strings.EqualFold(inp, "n") || strings.EqualFold(inp, "no") {
 		return true
 	} else {
-		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m):")
+		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m): ")
 		return false
 	}
 }
@@ -45,7 +45,7 @@ func CreateValidatorFn(fn func(string) error) ValidatorFn {
 	return func(inp string) bool {
 		err := fn(inp)
 		if err != nil {
-			fmt.Println("[-] ", err)
+			fmt.Print("[-] ", err, " please repeat: ")
 			return false
 		}
 
@@ -58,7 +58,7 @@ func SpecialCharacterValidator(str string, cond bool) ValidatorFn {
 		r, err := regexp.Compile(`[` + str + `]`)
 
 		if err != nil {
-			fmt.Println("[-] ", err)
+			fmt.Print("[-] ", err, " please repeat: ")
 			return false
 		}
 

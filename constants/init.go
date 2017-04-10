@@ -48,7 +48,6 @@ const (
 		"iface wlan0 inet static\n" +
 		"address %s\n" +
 		"netmask %s\n" +
-		"network %s\n" +
 		"gateway %s\n" +
 		"dns-nameservers %s\n" +
 		"wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf\n"
@@ -62,7 +61,6 @@ const (
 		"iface eth0 inet static\n" +
 		"address %s\n" +
 		"netmask %s\n" +
-		"network %s\n" +
 		"gateway %s\n" +
 		"dns-nameservers %s\n" +
 		"\n" +

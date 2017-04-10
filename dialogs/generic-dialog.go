@@ -37,7 +37,7 @@ Loop:
 		inp, err := reader.ReadString('\n')
 		if err != nil {
 			log.Error(err.Error())
-			fmt.Println("[-] Could not read input string from stdin:", err.Error())
+			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
 			fmt.Print("[?] Please repeat: ")
 			continue
 		}
@@ -71,7 +71,7 @@ Loop:
 		inp, err := reader.ReadString('\n')
 		if err != nil {
 			log.Error(err.Error())
-			fmt.Println("[-] Could not read input string from stdin:", err.Error())
+			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
 			fmt.Print("[?] Please repeat: ")
 			continue
 		}
@@ -119,13 +119,13 @@ func SelectOneDialog(question string, opts []string) int {
 		answer, err := reader.ReadString('\n')
 		if err != nil {
 			log.Error(err.Error())
-			fmt.Println("[-] Could not read input string from stdin:", err.Error())
+			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
 			continue
 		}
 
 		inp, err := strconv.Atoi(strings.TrimSpace(answer))
 		if err != nil || inp < 1 || inp > len(opts) {
-			fmt.Println("[-] Invalid user input, ", err)
+			fmt.Println("[-] Invalid user input, ", err, " please repeat: ")
 			continue
 		}
 
