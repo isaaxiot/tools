@@ -1,43 +1,42 @@
 package constants
 
 const (
-	ISAAX_HOME_DIR    = "/tmp/isaax-agent/"
-	ISAAX_DAEMON_DIR  = "/opt/"
-	ISAAX_CONF_DIR    = "/etc/"
-	ISAAX_APP_DIR     = "/var/isaax/project/"
-	UNTAR             = "tar xvf"
-	NUMBER_OF_RETRIES = 5
+	ISAAX_DAEMON_DIR = "/opt/"
+	ISAAX_CONF_DIR   = "/etc/"
+	ISAAX_APP_DIR    = "/var/isaax/project/"
 
-	DARWIN_DISKUTIL     = "diskutil"
-	DARWIN_UNMOUNT_DISK = "unmountDisk"
+	DarwinDiskutil = "diskutil"
+	UnixDD         = "dd"
+	Mount          = "mount"
+	DarwinUmount   = "unmountDisk"
 
-	LINUX_DD    = "dd"
-	LINUX_MOUNT = "mount"
+	MountDir = "/tmp/isaax-sd/"
+	Eject    = "eject"
+	Umount   = "umount"
 
-	GENERAL_MOUNT_FOLDER = "/tmp/isaax-sd/"
-	GENERAL_EJECT        = "eject"
-	GENERAL_UNMOUNT      = "umount"
+	LocaleF       string = "locale.conf"
+	KeyboardF     string = "vconsole.conf"
+	WPAsupplicant string = "wpa_supplicant.conf"
+	InterfacesF   string = "interfaces"
+	ResolveF      string = "resolv.conf"
 
-	LOCALE_F       string = "locale.conf"
-	KEYBOAD_F      string = "vconsole.conf"
-	WPA_SUPPLICANT string = "wpa_supplicant.conf"
-	INTERFACES_F   string = "interfaces"
-	RESOLV_CONF    string = "resolv.conf"
+	Language   = "LANGUAGE=%s\n"
+	LocaleAll  = "LC_ALL=%s\n"
+	LocaleLang = "LANG=%s\n"
 
-	LANG        = "LANGUAGE=%s\n"
-	LOCALE      = "LC_ALL=%s\n"
-	LOCALE_LANG = "LANG=%s\n"
+	KeyMap = "KEYMAP=%s\n"
 
-	KEYMAP = "KEYMAP=%s\n"
+	WPAconf = `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 
-	WPA_CONF = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev \n" +
-		"update_config=1 \n\n" +
-		"network={ \n" +
-		"\tssid=\"%s\" \n" +
-		"\tpsk=\"%s\" \n" +
-		"}\n"
+update_config=1
 
-	INTERFACE_WLAN string = "source-directory /etc/network/interfaces.d\n" +
+network={
+	ssid=\"%s\"
+	psk=\"%s\"
+}
+`
+
+	InterfaceWLAN string = "source-directory /etc/network/interfaces.d\n" +
 		"\n" +
 		"auto lo\n" +
 		"iface lo inet loopback\n" +
@@ -52,7 +51,7 @@ const (
 		"dns-nameservers %s\n" +
 		"wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf\n"
 
-	INTERFACE_ETH string = "source-directory /etc/network/interfaces.d\n" +
+	InterfaceETH string = "source-directory /etc/network/interfaces.d\n" +
 		"\n" +
 		"auto lo\n" +
 		"iface lo inet loopback\n" +
@@ -66,5 +65,5 @@ const (
 		"\n" +
 		"iface default inet dhcp\n"
 
-	RESOLV string = "nameserver %s\n"
+	Resolv string = "nameserver %s\n"
 )
