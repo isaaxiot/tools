@@ -2,508 +2,3350 @@ package constants
 
 import (
 	"errors"
-	"regexp"
+	"fmt"
+	"strings"
 )
 
-//@todo check and update list
-const Locale = `aa_DJ ISO-8859-1
-aa_DJ.UTF-8 UTF-8
-aa_ER UTF-8
-aa_ER@saaho UTF-8
-aa_ET UTF-8
-af_ZA ISO-8859-1
-af_ZA.UTF-8 UTF-8
-ak_GH UTF-8
-am_ET UTF-8
-an_ES ISO-8859-15
-an_ES.UTF-8 UTF-8
-anp_IN UTF-8
-ar_AE ISO-8859-6
-ar_AE.UTF-8 UTF-8
-ar_BH ISO-8859-6
-ar_BH.UTF-8 UTF-8
-ar_DZ ISO-8859-6
-ar_DZ.UTF-8 UTF-8
-ar_EG ISO-8859-6
-ar_EG.UTF-8 UTF-8
-ar_IN UTF-8
-ar_IQ ISO-8859-6
-ar_IQ.UTF-8 UTF-8
-ar_JO ISO-8859-6
-ar_JO.UTF-8 UTF-8
-ar_KW ISO-8859-6
-ar_KW.UTF-8 UTF-8
-ar_LB ISO-8859-6
-ar_LB.UTF-8 UTF-8
-ar_LY ISO-8859-6
-ar_LY.UTF-8 UTF-8
-ar_MA ISO-8859-6
-ar_MA.UTF-8 UTF-8
-ar_OM ISO-8859-6
-ar_OM.UTF-8 UTF-8
-ar_QA ISO-8859-6
-ar_QA.UTF-8 UTF-8
-ar_SA ISO-8859-6
-ar_SA.UTF-8 UTF-8
-ar_SD ISO-8859-6
-ar_SD.UTF-8 UTF-8
-ar_SS UTF-8
-ar_SY ISO-8859-6
-ar_SY.UTF-8 UTF-8
-ar_TN ISO-8859-6
-ar_TN.UTF-8 UTF-8
-ar_YE ISO-8859-6
-ar_YE.UTF-8 UTF-8
-as_IN UTF-8
-ast_ES ISO-8859-15
-ast_ES.UTF-8 UTF-8
-ayc_PE UTF-8
-az_AZ UTF-8
-be_BY CP1251
-be_BY.UTF-8 UTF-8
-be_BY@latin UTF-8
-bem_ZM UTF-8
-ber_DZ UTF-8
-ber_MA UTF-8
-bg_BG CP1251
-bg_BG.UTF-8 UTF-8
-bhb_IN.UTF-8 UTF-8
-bho_IN UTF-8
-bn_BD UTF-8
-bn_IN UTF-8
-bo_CN UTF-8
-bo_IN UTF-8
-br_FR ISO-8859-1
-br_FR.UTF-8 UTF-8
-br_FR@euro ISO-8859-15
-brx_IN UTF-8
-bs_BA ISO-8859-2
-bs_BA.UTF-8 UTF-8
-byn_ER UTF-8
-ca_AD ISO-8859-15
-ca_AD.UTF-8 UTF-8
-ca_ES ISO-8859-1
-ca_ES.UTF-8 UTF-8
-ca_ES.UTF-8@valencia UTF-8
-ca_ES@euro ISO-8859-15
-ca_ES@valencia ISO-8859-15
-ca_FR ISO-8859-15
-ca_FR.UTF-8 UTF-8
-ca_IT ISO-8859-15
-ca_IT.UTF-8 UTF-8
-ce_RU UTF-8
-ckb_IQ UTF-8
-cmn_TW UTF-8
-crh_UA UTF-8
-cs_CZ ISO-8859-2
-cs_CZ.UTF-8 UTF-8
-csb_PL UTF-8
-cv_RU UTF-8
-cy_GB ISO-8859-14
-cy_GB.UTF-8 UTF-8
-da_DK ISO-8859-1
-da_DK.UTF-8 UTF-8
-de_AT ISO-8859-1
-de_AT.UTF-8 UTF-8
-de_AT@euro ISO-8859-15
-de_BE ISO-8859-1
-de_BE.UTF-8 UTF-8
-de_BE@euro ISO-8859-15
-de_CH ISO-8859-1
-de_CH.UTF-8 UTF-8
-de_DE ISO-8859-1
-de_DE.UTF-8 UTF-8
-de_DE@euro ISO-8859-15
-de_LI.UTF-8 UTF-8
-de_LU ISO-8859-1
-de_LU.UTF-8 UTF-8
-de_LU@euro ISO-8859-15
-doi_IN UTF-8
-dv_MV UTF-8
-dz_BT UTF-8
-el_CY ISO-8859-7
-el_CY.UTF-8 UTF-8
-el_GR ISO-8859-7
-el_GR.UTF-8 UTF-8
-en_AG UTF-8
-en_AU ISO-8859-1
-en_AU.UTF-8 UTF-8
-en_BW ISO-8859-1
-en_BW.UTF-8 UTF-8
-en_CA ISO-8859-1
-en_CA.UTF-8 UTF-8
-en_DK ISO-8859-1
-en_DK.ISO-8859-15 ISO-8859-15
-en_DK.UTF-8 UTF-8
-en_GB ISO-8859-1
-en_GB.ISO-8859-15 ISO-8859-15
-en_GB.UTF-8 UTF-8
-en_HK ISO-8859-1
-en_HK.UTF-8 UTF-8
-en_IE ISO-8859-1
-en_IE.UTF-8 UTF-8
-en_IE@euro ISO-8859-15
-en_IN UTF-8
-en_NG UTF-8
-en_NZ ISO-8859-1
-en_NZ.UTF-8 UTF-8
-en_PH ISO-8859-1
-en_PH.UTF-8 UTF-8
-en_SG ISO-8859-1
-en_SG.UTF-8 UTF-8
-en_US ISO-8859-1
-en_US.ISO-8859-15 ISO-8859-15
-en_US.UTF-8 UTF-8
-en_ZA ISO-8859-1
-en_ZA.UTF-8 UTF-8
-en_ZM UTF-8
-en_ZW ISO-8859-1
-en_ZW.UTF-8 UTF-8
-eo ISO-8859-3
-eo.UTF-8 UTF-8
-eo_US.UTF-8 UTF-8
-es_AR ISO-8859-1
-es_AR.UTF-8 UTF-8
-es_BO ISO-8859-1
-es_BO.UTF-8 UTF-8
-es_CL ISO-8859-1
-es_CL.UTF-8 UTF-8
-es_CO ISO-8859-1
-es_CO.UTF-8 UTF-8
-es_CR ISO-8859-1
-es_CR.UTF-8 UTF-8
-es_CU UTF-8
-es_DO ISO-8859-1
-es_DO.UTF-8 UTF-8
-es_EC ISO-8859-1
-es_EC.UTF-8 UTF-8
-es_ES ISO-8859-1
-es_ES.UTF-8 UTF-8
-es_ES@euro ISO-8859-15
-es_GT ISO-8859-1
-es_GT.UTF-8 UTF-8
-es_HN ISO-8859-1
-es_HN.UTF-8 UTF-8
-es_MX ISO-8859-1
-es_MX.UTF-8 UTF-8
-es_NI ISO-8859-1
-es_NI.UTF-8 UTF-8
-es_PA ISO-8859-1
-es_PA.UTF-8 UTF-8
-es_PE ISO-8859-1
-es_PE.UTF-8 UTF-8
-es_PR ISO-8859-1
-es_PR.UTF-8 UTF-8
-es_PY ISO-8859-1
-es_PY.UTF-8 UTF-8
-es_SV ISO-8859-1
-es_SV.UTF-8 UTF-8
-es_US ISO-8859-1
-es_US.UTF-8 UTF-8
-es_UY ISO-8859-1
-es_UY.UTF-8 UTF-8
-es_VE ISO-8859-1
-es_VE.UTF-8 UTF-8
-et_EE ISO-8859-1
-et_EE.ISO-8859-15 ISO-8859-15
-et_EE.UTF-8 UTF-8
-eu_ES ISO-8859-1
-eu_ES.UTF-8 UTF-8
-eu_ES@euro ISO-8859-15
-eu_FR ISO-8859-1
-eu_FR.UTF-8 UTF-8
-eu_FR@euro ISO-8859-15
-fa_IR UTF-8
-ff_SN UTF-8
-fi_FI ISO-8859-1
-fi_FI.UTF-8 UTF-8
-fi_FI@euro ISO-8859-15
-fil_PH UTF-8
-fo_FO ISO-8859-1
-fo_FO.UTF-8 UTF-8
-fr_BE ISO-8859-1
-fr_BE.UTF-8 UTF-8
-fr_BE@euro ISO-8859-15
-fr_CA ISO-8859-1
-fr_CA.UTF-8 UTF-8
-fr_CH ISO-8859-1
-fr_CH.UTF-8 UTF-8
-fr_FR ISO-8859-1
-fr_FR.UTF-8 UTF-8
-fr_FR@euro ISO-8859-15
-fr_LU ISO-8859-1
-fr_LU.UTF-8 UTF-8
-fr_LU@euro ISO-8859-15
-fur_IT UTF-8
-fy_DE UTF-8
-fy_NL UTF-8
-ga_IE ISO-8859-1
-ga_IE.UTF-8 UTF-8
-ga_IE@euro ISO-8859-15
-gd_GB ISO-8859-15
-gd_GB.UTF-8 UTF-8
-gez_ER UTF-8
-gez_ER@abegede UTF-8
-gez_ET UTF-8
-gez_ET@abegede UTF-8
-gl_ES ISO-8859-1
-gl_ES.UTF-8 UTF-8
-gl_ES@euro ISO-8859-15
-gu_IN UTF-8
-gv_GB ISO-8859-1
-gv_GB.UTF-8 UTF-8
-ha_NG UTF-8
-hak_TW UTF-8
-he_IL ISO-8859-8
-he_IL.UTF-8 UTF-8
-hi_IN UTF-8
-hne_IN UTF-8
-hr_HR ISO-8859-2
-hr_HR.UTF-8 UTF-8
-hsb_DE ISO-8859-2
-hsb_DE.UTF-8 UTF-8
-ht_HT UTF-8
-hu_HU ISO-8859-2
-hu_HU.UTF-8 UTF-8
-hy_AM UTF-8
-hy_AM.ARMSCII-8 ARMSCII-8
-ia_FR UTF-8
-id_ID ISO-8859-1
-id_ID.UTF-8 UTF-8
-ig_NG UTF-8
-ik_CA UTF-8
-is_IS ISO-8859-1
-is_IS.UTF-8 UTF-8
-it_CH ISO-8859-1
-it_CH.UTF-8 UTF-8
-it_IT ISO-8859-1
-it_IT.UTF-8 UTF-8
-it_IT@euro ISO-8859-15
-iu_CA UTF-8
-iw_IL ISO-8859-8
-iw_IL.UTF-8 UTF-8
-ja_JP.EUC-JP EUC-JP
-ja_JP.UTF-8 UTF-8
-ka_GE GEORGIAN-PS
-ka_GE.UTF-8 UTF-8
-kk_KZ PT154
-kk_KZ RK1048
-kk_KZ.UTF-8 UTF-8
-kl_GL ISO-8859-1
-kl_GL.UTF-8 UTF-8
-km_KH UTF-8
-kn_IN UTF-8
-ko_KR.EUC-KR EUC-KR
-ko_KR.UTF-8 UTF-8
-kok_IN UTF-8
-ks_IN UTF-8
-ks_IN@devanagari UTF-8
-ku_TR ISO-8859-9
-ku_TR.UTF-8 UTF-8
-kw_GB ISO-8859-1
-kw_GB.UTF-8 UTF-8
-ky_KG UTF-8
-lb_LU UTF-8
-lg_UG ISO-8859-10
-lg_UG.UTF-8 UTF-8
-li_BE UTF-8
-li_NL UTF-8
-lij_IT UTF-8
-ln_CD UTF-8
-lo_LA UTF-8
-lt_LT ISO-8859-13
-lt_LT.UTF-8 UTF-8
-lv_LV ISO-8859-13
-lv_LV.UTF-8 UTF-8
-lzh_TW UTF-8
-mag_IN UTF-8
-mai_IN UTF-8
-mg_MG ISO-8859-15
-mg_MG.UTF-8 UTF-8
-mhr_RU UTF-8
-mi_NZ ISO-8859-13
-mi_NZ.UTF-8 UTF-8
-mk_MK ISO-8859-5
-mk_MK.UTF-8 UTF-8
-ml_IN UTF-8
-mn_MN UTF-8
-mni_IN UTF-8
-mr_IN UTF-8
-ms_MY ISO-8859-1
-ms_MY.UTF-8 UTF-8
-mt_MT ISO-8859-3
-mt_MT.UTF-8 UTF-8
-my_MM UTF-8
-nan_TW UTF-8
-nan_TW@latin UTF-8
-nb_NO ISO-8859-1
-nb_NO.UTF-8 UTF-8
-nds_DE UTF-8
-nds_NL UTF-8
-ne_NP UTF-8
-nhn_MX UTF-8
-niu_NU UTF-8
-niu_NZ UTF-8
-nl_AW UTF-8
-nl_BE ISO-8859-1
-nl_BE.UTF-8 UTF-8
-nl_BE@euro ISO-8859-15
-nl_NL ISO-8859-1
-nl_NL.UTF-8 UTF-8
-nl_NL@euro ISO-8859-15
-nn_NO ISO-8859-1
-nn_NO.UTF-8 UTF-8
-nr_ZA UTF-8
-nso_ZA UTF-8
-oc_FR ISO-8859-1
-oc_FR.UTF-8 UTF-8
-om_ET UTF-8
-om_KE ISO-8859-1
-om_KE.UTF-8 UTF-8
-or_IN UTF-8
-os_RU UTF-8
-pa_IN UTF-8
-pa_PK UTF-8
-pap_AN UTF-8
-pap_AW UTF-8
-pap_CW UTF-8
-pl_PL ISO-8859-2
-pl_PL.UTF-8 UTF-8
-ps_AF UTF-8
-pt_BR ISO-8859-1
-pt_BR.UTF-8 UTF-8
-pt_PT ISO-8859-1
-pt_PT.UTF-8 UTF-8
-pt_PT@euro ISO-8859-15
-quz_PE UTF-8
-raj_IN UTF-8
-ro_RO ISO-8859-2
-ro_RO.UTF-8 UTF-8
-ru_RU ISO-8859-5
-ru_RU.CP1251 CP1251
-ru_RU.KOI8-R KOI8-R
-ru_RU.UTF-8 UTF-8
-ru_UA KOI8-U
-ru_UA.UTF-8 UTF-8
-rw_RW UTF-8
-sa_IN UTF-8
-sat_IN UTF-8
-sc_IT UTF-8
-sd_IN UTF-8
-sd_IN@devanagari UTF-8
-sd_PK UTF-8
-se_NO UTF-8
-shs_CA UTF-8
-si_LK UTF-8
-sid_ET UTF-8
-sk_SK ISO-8859-2
-sk_SK.UTF-8 UTF-8
-sl_SI ISO-8859-2
-sl_SI.UTF-8 UTF-8
-so_DJ ISO-8859-1
-so_DJ.UTF-8 UTF-8
-so_ET UTF-8
-so_KE ISO-8859-1
-so_KE.UTF-8 UTF-8
-so_SO ISO-8859-1
-so_SO.UTF-8 UTF-8
-sq_AL ISO-8859-1
-sq_AL.UTF-8 UTF-8
-sq_MK UTF-8
-sr_ME UTF-8
-sr_RS UTF-8
-sr_RS@latin UTF-8
-ss_ZA UTF-8
-st_ZA ISO-8859-1
-st_ZA.UTF-8 UTF-8
-sv_FI ISO-8859-1
-sv_FI.UTF-8 UTF-8
-sv_FI@euro ISO-8859-15
-sv_SE ISO-8859-1
-sv_SE.ISO-8859-15 ISO-8859-15
-sv_SE.UTF-8 UTF-8
-sw_KE UTF-8
-sw_TZ UTF-8
-szl_PL UTF-8
-ta_IN UTF-8
-ta_LK UTF-8
-tcy_IN.UTF-8 UTF-8
-te_IN UTF-8
-tg_TJ KOI8-T
-tg_TJ.UTF-8 UTF-8
-th_TH TIS-620
-th_TH.UTF-8 UTF-8
-the_NP UTF-8
-ti_ER UTF-8
-ti_ET UTF-8
-tig_ER UTF-8
-tk_TM UTF-8
-tl_PH ISO-8859-1
-tl_PH.UTF-8 UTF-8
-tn_ZA UTF-8
-tr_CY ISO-8859-9
-tr_CY.UTF-8 UTF-8
-tr_TR ISO-8859-9
-tr_TR.UTF-8 UTF-8
-ts_ZA UTF-8
-tt_RU UTF-8
-tt_RU@iqtelif UTF-8
-ug_CN UTF-8
-ug_CN@latin UTF-8
-uk_UA KOI8-U
-uk_UA.UTF-8 UTF-8
-unm_US UTF-8
-ur_IN UTF-8
-ur_PK UTF-8
-uz_UZ ISO-8859-1
-uz_UZ.UTF-8 UTF-8
-uz_UZ@cyrillic UTF-8
-ve_ZA UTF-8
-vi_VN UTF-8
-wa_BE ISO-8859-1
-wa_BE.UTF-8 UTF-8
-wa_BE@euro ISO-8859-15
-wae_CH UTF-8
-wal_ET UTF-8
-wo_SN UTF-8
-xh_ZA ISO-8859-1
-xh_ZA.UTF-8 UTF-8
-yi_US CP1255
-yi_US.UTF-8 UTF-8
-yo_NG UTF-8
-yue_HK UTF-8
-zh_CN GB2312
-zh_CN.GB18030 GB18030
-zh_CN.GBK GBK
-zh_CN.UTF-8 UTF-8
-zh_HK BIG5-HKSCS
-zh_HK.UTF-8 UTF-8
-zh_SG GB2312
-zh_SG.GBK GBK
-zh_SG.UTF-8 UTF-8
-zh_TW BIG5
-zh_TW.EUC-TW EUC-TW
-zh_TW.UTF-8 UTF-8
-zu_ZA ISO-8859-1
-zu_ZA.UTF-8 UTF-8`
+type Locale struct {
+	Locale    string
+	Title     string
+	Language  string
+	Territory string
+	Codeset   string
+}
 
-func GetLocale(l string) ([]string, error) {
-	match, err := regexp.Compile("(?im)^" + l + ".*")
+var locales = []*Locale{
+	&Locale{
+		Locale:    "aa_DJ",
+		Title:     "Afar language locale for Djibouti (CaduLaaqo Dialects).",
+		Language:  "aa",
+		Territory: "DJ",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "aa_DJ.utf8",
+		Title:     "Afar language locale for Djibouti (CaduLaaqo Dialects).",
+		Language:  "aa",
+		Territory: "DJ",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "aa_ER",
+		Title:     "Afar language locale for Eritrea (CaduLaaqo Dialects).",
+		Language:  "aa",
+		Territory: "ER",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "aa_ER@saaho",
+		Title:     "Afar language locale for Eritrea (Saaho Dialect).",
+		Language:  "aa",
+		Territory: "ER",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "aa_ET",
+		Title:     "Afar language locale for Ethiopia (CaduCarra Dialects).",
+		Language:  "aa",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "af_ZA",
+		Title:     "Afrikaans locale for South Africa",
+		Language:  "Afrikaans",
+		Territory: "South Africa",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "af_ZA.utf8",
+		Title:     "Afrikaans locale for South Africa",
+		Language:  "Afrikaans",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ak_GH",
+		Title:     "Akan locale for Ghana",
+		Language:  "Akan",
+		Territory: "Ghana",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "am_ET",
+		Title:     "Amharic language locale for Ethiopia.",
+		Language:  "am",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "an_ES",
+		Title:     "Aragonese locale for Spain",
+		Language:  "Aragonese",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "an_ES.utf8",
+		Title:     "Aragonese locale for Spain",
+		Language:  "Aragonese",
+		Territory: "Spain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "anp_IN",
+		Title:     "Angika language locale for India",
+		Language:  "Angika",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_AE",
+		Title:     "Arabic language locale for United Arab Emirates",
+		Language:  "Arabic",
+		Territory: "United Arab Emirates",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_AE.utf8",
+		Title:     "Arabic language locale for United Arab Emirates",
+		Language:  "Arabic",
+		Territory: "United Arab Emirates",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_BH",
+		Title:     "Arabic language locale for Bahrain",
+		Language:  "Arabic",
+		Territory: "Bahrain",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_BH.utf8",
+		Title:     "Arabic language locale for Bahrain",
+		Language:  "Arabic",
+		Territory: "Bahrain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_DZ",
+		Title:     "Arabic language locale for Algeria",
+		Language:  "Arabic",
+		Territory: "Algeria",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_DZ.utf8",
+		Title:     "Arabic language locale for Algeria",
+		Language:  "Arabic",
+		Territory: "Algeria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_EG",
+		Title:     "Arabic language locale for Egypt",
+		Language:  "Arabic",
+		Territory: "Egypt",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_EG.utf8",
+		Title:     "Arabic language locale for Egypt",
+		Language:  "Arabic",
+		Territory: "Egypt",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_IN",
+		Title:     "Arabic language locale for India",
+		Language:  "Arabic",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_IQ",
+		Title:     "Arabic language locale for Iraq",
+		Language:  "Arabic",
+		Territory: "Iraq",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_IQ.utf8",
+		Title:     "Arabic language locale for Iraq",
+		Language:  "Arabic",
+		Territory: "Iraq",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_JO",
+		Title:     "Arabic language locale for Jordan",
+		Language:  "Arabic",
+		Territory: "Jordan",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_JO.utf8",
+		Title:     "Arabic language locale for Jordan",
+		Language:  "Arabic",
+		Territory: "Jordan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_KW",
+		Title:     "Arabic language locale for Kuwait",
+		Language:  "Arabic",
+		Territory: "Kuwait",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_KW.utf8",
+		Title:     "Arabic language locale for Kuwait",
+		Language:  "Arabic",
+		Territory: "Kuwait",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_LB",
+		Title:     "Arabic language locale for Lebanon",
+		Language:  "Arabic",
+		Territory: "Lebanon",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_LB.utf8",
+		Title:     "Arabic language locale for Lebanon",
+		Language:  "Arabic",
+		Territory: "Lebanon",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_LY",
+		Title:     "Arabic language locale for Libyan Arab Jamahiriya",
+		Language:  "Arabic",
+		Territory: "Libyan Arab Jamahiriya",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_LY.utf8",
+		Title:     "Arabic language locale for Libyan Arab Jamahiriya",
+		Language:  "Arabic",
+		Territory: "Libyan Arab Jamahiriya",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_MA",
+		Title:     "Arabic language locale for Morocco",
+		Language:  "Arabic",
+		Territory: "Morocco",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_MA.utf8",
+		Title:     "Arabic language locale for Morocco",
+		Language:  "Arabic",
+		Territory: "Morocco",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_OM",
+		Title:     "Arabic language locale for Oman",
+		Language:  "Arabic",
+		Territory: "Oman",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_OM.utf8",
+		Title:     "Arabic language locale for Oman",
+		Language:  "Arabic",
+		Territory: "Oman",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_QA",
+		Title:     "Arabic language locale for Qatar",
+		Language:  "Arabic",
+		Territory: "Qatar",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_QA.utf8",
+		Title:     "Arabic language locale for Qatar",
+		Language:  "Arabic",
+		Territory: "Qatar",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_SA",
+		Title:     "Arabic locale for Saudi Arabia",
+		Language:  "Arabic",
+		Territory: "Saudi Arabia",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_SA.utf8",
+		Title:     "Arabic locale for Saudi Arabia",
+		Language:  "Arabic",
+		Territory: "Saudi Arabia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_SD",
+		Title:     "Arabic language locale for Sudan",
+		Language:  "Arabic",
+		Territory: "Sudan",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_SD.utf8",
+		Title:     "Arabic language locale for Sudan",
+		Language:  "Arabic",
+		Territory: "Sudan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_SS",
+		Title:     "Arabic language locale for South Sudan",
+		Language:  "Arabic",
+		Territory: "South Sudan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_SY",
+		Title:     "Arabic language locale for Syrian Arab Republic",
+		Language:  "Arabic",
+		Territory: "Syrian Arab Republic",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_SY.utf8",
+		Title:     "Arabic language locale for Syrian Arab Republic",
+		Language:  "Arabic",
+		Territory: "Syrian Arab Republic",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_TN",
+		Title:     "Arabic language locale for Tunisia",
+		Language:  "Arabic",
+		Territory: "Tunisia",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_TN.utf8",
+		Title:     "Arabic language locale for Tunisia",
+		Language:  "Arabic",
+		Territory: "Tunisia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ar_YE",
+		Title:     "Arabic language locale for Yemen",
+		Language:  "Arabic",
+		Territory: "Yemen",
+		Codeset:   "ISO-8859-6",
+	},
+	&Locale{
+		Locale:    "ar_YE.utf8",
+		Title:     "Arabic language locale for Yemen",
+		Language:  "Arabic",
+		Territory: "Yemen",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "as_IN",
+		Title:     "Assamese language locale for India",
+		Language:  "Assamese",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ast_ES",
+		Title:     "Asturian locale for Spain",
+		Language:  "Asturian",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "ast_ES.utf8",
+		Title:     "Asturian locale for Spain",
+		Language:  "Asturian",
+		Territory: "Spain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ayc_PE",
+		Title:     "Aymara (ayc) locale for Peru",
+		Language:  "Aymara",
+		Territory: "Peru",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "az_AZ",
+		Title:     "Azeri language locale for Azerbaijan (latin)",
+		Language:  "Azeri",
+		Territory: "Azerbaijan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "be_BY",
+		Title:     "Belarusian locale for Belarus",
+		Language:  "Belarusian",
+		Territory: "Belarus",
+		Codeset:   "CP1251",
+	},
+	&Locale{
+		Locale:    "be_BY@latin",
+		Title:     "Belarusian Latin-Script locale for Belarus",
+		Language:  "Belarusian",
+		Territory: "Belarus",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "be_BY.utf8",
+		Title:     "Belarusian locale for Belarus",
+		Language:  "Belarusian",
+		Territory: "Belarus",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bem_ZM",
+		Title:     "Bemba locale for Zambia",
+		Language:  "Bemba",
+		Territory: "Zambia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ber_DZ",
+		Title:     "Amazigh language locale for Algeria (latin)",
+		Language:  "Amazigh",
+		Territory: "Algeria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ber_MA",
+		Title:     "Amazigh language locale for Morocco (tifinagh)",
+		Language:  "Amazigh",
+		Territory: "Morocco",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bg_BG",
+		Title:     "Bulgarian locale for Bulgaria",
+		Language:  "Bulgarian",
+		Territory: "Bulgaria",
+		Codeset:   "CP1251",
+	},
+	&Locale{
+		Locale:    "bg_BG.utf8",
+		Title:     "Bulgarian locale for Bulgaria",
+		Language:  "Bulgarian",
+		Territory: "Bulgaria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bho_IN",
+		Title:     "Bhojpuri language locale for India",
+		Language:  "Bhojpuri",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bn_BD",
+		Title:     "BengaliBangla language locale for Bangladesh",
+		Language:  "BengaliBangla",
+		Territory: "Bangladesh",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bn_IN",
+		Title:     "Bengali language locale for India",
+		Language:  "Bengali",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bo_CN",
+		Title:     "Tibetan language locale for P.R. of China",
+		Language:  "Tibetan",
+		Territory: "P.R. of China",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bo_IN",
+		Title:     "Tibetan language locale for India",
+		Language:  "Tibetan",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "br_FR",
+		Title:     "Breton language locale for France",
+		Language:  "Breton",
+		Territory: "France",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "br_FR@euro",
+		Title:     "Breton locale for France with Euro",
+		Language:  "Breton",
+		Territory: "France",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "br_FR.utf8",
+		Title:     "Breton language locale for France",
+		Language:  "Breton",
+		Territory: "France",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "brx_IN",
+		Title:     "Bodo language locale for India",
+		Language:  "Bodo",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "bs_BA",
+		Title:     "Bosnian language locale for Bosnia and Herzegowina",
+		Language:  "Bosnian",
+		Territory: "Bosnia and Herzegowina",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "bs_BA.utf8",
+		Title:     "Bosnian language locale for Bosnia and Herzegowina",
+		Language:  "Bosnian",
+		Territory: "Bosnia and Herzegowina",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "byn_ER",
+		Title:     "Blin language locale for Eritrea",
+		Language:  "byn",
+		Territory: "ER",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "C",
+		Title:     "ISO/IEC 14652 i18n FDCC-set",
+		Language:  "",
+		Territory: "ISO",
+		Codeset:   "ANSI_X3.4-1968",
+	},
+	&Locale{
+		Locale:    "ca_AD",
+		Title:     "Catalan locale for Andorra ",
+		Language:  "Catalan",
+		Territory: "Andorra",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "ca_AD.utf8",
+		Title:     "Catalan locale for Andorra ",
+		Language:  "Catalan",
+		Territory: "Andorra",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ca_ES",
+		Title:     "Catalan locale for Spain",
+		Language:  "Catalan",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "ca_ES@euro",
+		Title:     "Catalan locale for Catalonia with Euro",
+		Language:  "Catalan",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "ca_ES.utf8",
+		Title:     "Catalan locale for Spain",
+		Language:  "Catalan",
+		Territory: "Spain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ca_ES.utf8@valencia",
+		Title:     "Valencian (southern Catalan) locale for Spain with Euro",
+		Language:  "Catalan",
+		Territory: "Spain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ca_ES@valencia",
+		Title:     "Valencian (southern Catalan) locale for Spain with Euro",
+		Language:  "Catalan",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "ca_FR",
+		Title:     "Catalan locale for France ",
+		Language:  "Catalan",
+		Territory: "France",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "ca_FR.utf8",
+		Title:     "Catalan locale for France ",
+		Language:  "Catalan",
+		Territory: "France",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ca_IT",
+		Title:     "Catalan locale for Italy (L'Alguer) ",
+		Language:  "Catalan",
+		Territory: "Italy (L'Alguer)",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "ca_IT.utf8",
+		Title:     "Catalan locale for Italy (L'Alguer) ",
+		Language:  "Catalan",
+		Territory: "Italy (L'Alguer)",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "cmn_TW",
+		Title:     "Mandarin Chinese locale for the Republic of China",
+		Language:  "Mandarin Chinese",
+		Territory: "Republic of China",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "crh_UA",
+		Title:     "Crimean Tatar (Crimean Turkish) language locale for Ukraine",
+		Language:  "Crimean Tatar",
+		Territory: "Ukraine",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "csb_PL",
+		Title:     "Kashubian locale for Poland",
+		Language:  "Kashubian",
+		Territory: "Poland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "cs_CZ",
+		Title:     "Czech locale for the Czech Republic",
+		Language:  "Czech",
+		Territory: "Czech Republic",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "cs_CZ.utf8",
+		Title:     "Czech locale for the Czech Republic",
+		Language:  "Czech",
+		Territory: "Czech Republic",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "C.UTF-8",
+		Title:     "C locale",
+		Language:  "C",
+		Territory: "",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "cv_RU",
+		Title:     "Chuvash locale for Russia",
+		Language:  "Chuvash",
+		Territory: "Russia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "cy_GB",
+		Title:     "Welsh language locale for Great Britain",
+		Language:  "Welsh",
+		Territory: "Great Britain",
+		Codeset:   "ISO-8859-14",
+	},
+	&Locale{
+		Locale:    "cy_GB.utf8",
+		Title:     "Welsh language locale for Great Britain",
+		Language:  "Welsh",
+		Territory: "Great Britain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "da_DK",
+		Title:     "Danish locale for Denmark",
+		Language:  "Danish",
+		Territory: "Denmark",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "da_DK.utf8",
+		Title:     "Danish locale for Denmark",
+		Language:  "Danish",
+		Territory: "Denmark",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "de_AT",
+		Title:     "German locale for Austria",
+		Language:  "German",
+		Territory: "Austria",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "de_AT@euro",
+		Title:     "German locale for Austria with Euro",
+		Language:  "German",
+		Territory: "Austria",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "de_AT.utf8",
+		Title:     "German locale for Austria",
+		Language:  "German",
+		Territory: "Austria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "de_BE",
+		Title:     "German locale for Belgium",
+		Language:  "German",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "de_BE@euro",
+		Title:     "German locale for Belgium with Euro",
+		Language:  "German",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "de_BE.utf8",
+		Title:     "German locale for Belgium",
+		Language:  "German",
+		Territory: "Belgium",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "de_CH",
+		Title:     "German locale for Switzerland",
+		Language:  "German",
+		Territory: "Switzerland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "de_CH.utf8",
+		Title:     "German locale for Switzerland",
+		Language:  "German",
+		Territory: "Switzerland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "de_DE",
+		Title:     "German locale for Germany",
+		Language:  "German",
+		Territory: "Germany",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "de_DE@euro",
+		Title:     "German locale for Germany with Euro",
+		Language:  "German",
+		Territory: "Germany",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "de_DE.utf8",
+		Title:     "German locale for Germany",
+		Language:  "German",
+		Territory: "Germany",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "de_LI.utf8",
+		Title:     "German locale for Liechtenstein",
+		Language:  "German",
+		Territory: "Liechtenstein",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "de_LU",
+		Title:     "German locale for Luxemburg",
+		Language:  "German",
+		Territory: "Luxemburg",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "de_LU@euro",
+		Title:     "German locale for Luxemburg with Euro",
+		Language:  "German",
+		Territory: "Luxemburg",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "de_LU.utf8",
+		Title:     "German locale for Luxemburg",
+		Language:  "German",
+		Territory: "Luxemburg",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "doi_IN",
+		Title:     "Dogri language locale for India",
+		Language:  "Dogri",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "dv_MV",
+		Title:     "Dhivehi Language Locale for Maldives",
+		Language:  "Divehi",
+		Territory: "Maldives",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "dz_BT",
+		Title:     "Dzongkha language locale for Bhutan",
+		Language:  "Dzongkha",
+		Territory: "Bhutan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "el_CY",
+		Title:     "Greek locale for Cyprus",
+		Language:  "Greek",
+		Territory: "Cyprus",
+		Codeset:   "ISO-8859-7",
+	},
+	&Locale{
+		Locale:    "el_CY.utf8",
+		Title:     "Greek locale for Cyprus",
+		Language:  "Greek",
+		Territory: "Cyprus",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "el_GR",
+		Title:     "Greek locale for Greece",
+		Language:  "Greek",
+		Territory: "Greece",
+		Codeset:   "ISO-8859-7",
+	},
+	&Locale{
+		Locale:    "el_GR.utf8",
+		Title:     "Greek locale for Greece",
+		Language:  "Greek",
+		Territory: "Greece",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_AG",
+		Title:     "English language locale for Antigua and Barbuda",
+		Language:  "English",
+		Territory: "Antigua and Barbuda",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_AU",
+		Title:     "English locale for Australia",
+		Language:  "English",
+		Territory: "Australia",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_AU.utf8",
+		Title:     "English locale for Australia",
+		Language:  "English",
+		Territory: "Australia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_BW",
+		Title:     "English locale for Botswana",
+		Language:  "English",
+		Territory: "Botswana",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_BW.utf8",
+		Title:     "English locale for Botswana",
+		Language:  "English",
+		Territory: "Botswana",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_CA",
+		Title:     "English locale for Canada",
+		Language:  "English",
+		Territory: "Canada",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_CA.utf8",
+		Title:     "English locale for Canada",
+		Language:  "English",
+		Territory: "Canada",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_DK",
+		Title:     "English locale for Denmark",
+		Language:  "English",
+		Territory: "Denmark",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_DK.iso885915",
+		Title:     "English locale for Denmark",
+		Language:  "English",
+		Territory: "Denmark",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "en_DK.utf8",
+		Title:     "English locale for Denmark",
+		Language:  "English",
+		Territory: "Denmark",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_GB",
+		Title:     "English locale for Britain",
+		Language:  "English",
+		Territory: "Great Britain",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_GB.iso885915",
+		Title:     "English locale for Britain",
+		Language:  "English",
+		Territory: "Great Britain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "en_GB.utf8",
+		Title:     "English locale for Britain",
+		Language:  "English",
+		Territory: "Great Britain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_HK",
+		Title:     "English locale for Hong Kong",
+		Language:  "English",
+		Territory: "Hong Kong",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_HK.utf8",
+		Title:     "English locale for Hong Kong",
+		Language:  "English",
+		Territory: "Hong Kong",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_IE",
+		Title:     "English locale for Ireland",
+		Language:  "English",
+		Territory: "Ireland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_IE@euro",
+		Title:     "English locale for Ireland with Euro",
+		Language:  "English",
+		Territory: "Ireland",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "en_IE.utf8",
+		Title:     "English locale for Ireland",
+		Language:  "English",
+		Territory: "Ireland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_IN",
+		Title:     "English language locale for India",
+		Language:  "English",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_NG",
+		Title:     "English locale for Nigeria",
+		Language:  "English",
+		Territory: "Nigeria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_NZ",
+		Title:     "English locale for New Zealand",
+		Language:  "English",
+		Territory: "New Zealand",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_NZ.utf8",
+		Title:     "English locale for New Zealand",
+		Language:  "English",
+		Territory: "New Zealand",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_PH",
+		Title:     "English language locale for Philippines",
+		Language:  "English",
+		Territory: "Philippines",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_PH.utf8",
+		Title:     "English language locale for Philippines",
+		Language:  "English",
+		Territory: "Philippines",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_SG",
+		Title:     "English language locale for Singapore",
+		Language:  "English",
+		Territory: "Singapore",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_SG.utf8",
+		Title:     "English language locale for Singapore",
+		Language:  "English",
+		Territory: "Singapore",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_US",
+		Title:     "English locale for the USA",
+		Language:  "English",
+		Territory: "USA",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_US.iso885915",
+		Title:     "English locale for the USA",
+		Language:  "English",
+		Territory: "USA",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "en_US.utf8",
+		Title:     "English locale for the USA",
+		Language:  "English",
+		Territory: "USA",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_ZA",
+		Title:     "English locale for South Africa",
+		Language:  "English",
+		Territory: "South Africa",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_ZA.utf8",
+		Title:     "English locale for South Africa",
+		Language:  "English",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_ZM",
+		Title:     "English locale for Zambia",
+		Language:  "English",
+		Territory: "Zambia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "en_ZW",
+		Title:     "English locale for Zimbabwe",
+		Language:  "English",
+		Territory: "Zimbabwe",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "en_ZW.utf8",
+		Title:     "English locale for Zimbabwe",
+		Language:  "English",
+		Territory: "Zimbabwe",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "eo",
+		Title:     "Esperanto locale",
+		Language:  "Esperanto",
+		Territory: "",
+		Codeset:   "ISO-8859-3",
+	},
+	&Locale{
+		Locale:    "eo.utf8",
+		Title:     "Esperanto locale",
+		Language:  "Esperanto",
+		Territory: "",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_AR",
+		Title:     "Spanish locale for Argentina",
+		Language:  "Spanish",
+		Territory: "Argentina",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_AR.utf8",
+		Title:     "Spanish locale for Argentina",
+		Language:  "Spanish",
+		Territory: "Argentina",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_BO",
+		Title:     "Spanish locale for Bolivia",
+		Language:  "Spanish",
+		Territory: "Bolivia",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_BO.utf8",
+		Title:     "Spanish locale for Bolivia",
+		Language:  "Spanish",
+		Territory: "Bolivia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_CL",
+		Title:     "Spanish locale for Chile",
+		Language:  "Spanish",
+		Territory: "Chile",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_CL.utf8",
+		Title:     "Spanish locale for Chile",
+		Language:  "Spanish",
+		Territory: "Chile",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_CO",
+		Title:     "Spanish locale for Colombia",
+		Language:  "Spanish",
+		Territory: "Colombia",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_CO.utf8",
+		Title:     "Spanish locale for Colombia",
+		Language:  "Spanish",
+		Territory: "Colombia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_CR",
+		Title:     "Spanish locale for Costa Rica",
+		Language:  "Spanish",
+		Territory: "Costa Rica",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_CR.utf8",
+		Title:     "Spanish locale for Costa Rica",
+		Language:  "Spanish",
+		Territory: "Costa Rica",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_CU",
+		Title:     "Spanish locale for Cuba",
+		Language:  "Spanish",
+		Territory: "Cuba",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_DO",
+		Title:     "Spanish locale for Dominican Republic",
+		Language:  "Spanish",
+		Territory: "Dominican Republic",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_DO.utf8",
+		Title:     "Spanish locale for Dominican Republic",
+		Language:  "Spanish",
+		Territory: "Dominican Republic",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_EC",
+		Title:     "Spanish locale for Ecuador",
+		Language:  "Spanish",
+		Territory: "Ecuador",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_EC.utf8",
+		Title:     "Spanish locale for Ecuador",
+		Language:  "Spanish",
+		Territory: "Ecuador",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_ES",
+		Title:     "Spanish locale for Spain",
+		Language:  "Spanish",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_ES@euro",
+		Title:     "Spanish locale for Spain with Euro",
+		Language:  "Spanish",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "es_ES.utf8",
+		Title:     "Spanish locale for Spain",
+		Language:  "Spanish",
+		Territory: "Spain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_GT",
+		Title:     "Spanish locale for Guatemala",
+		Language:  "Spanish",
+		Territory: "Guatemala",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_GT.utf8",
+		Title:     "Spanish locale for Guatemala",
+		Language:  "Spanish",
+		Territory: "Guatemala",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_HN",
+		Title:     "Spanish locale for Honduras",
+		Language:  "Spanish",
+		Territory: "Honduras",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_HN.utf8",
+		Title:     "Spanish locale for Honduras",
+		Language:  "Spanish",
+		Territory: "Honduras",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_MX",
+		Title:     "Spanish locale for Mexico",
+		Language:  "Spanish",
+		Territory: "Mexico",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_MX.utf8",
+		Title:     "Spanish locale for Mexico",
+		Language:  "Spanish",
+		Territory: "Mexico",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_NI",
+		Title:     "Spanish locale for Nicaragua",
+		Language:  "Spanish",
+		Territory: "Nicaragua",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_NI.utf8",
+		Title:     "Spanish locale for Nicaragua",
+		Language:  "Spanish",
+		Territory: "Nicaragua",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_PA",
+		Title:     "Spanish locale for Panama",
+		Language:  "Spanish",
+		Territory: "Panama",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_PA.utf8",
+		Title:     "Spanish locale for Panama",
+		Language:  "Spanish",
+		Territory: "Panama",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_PE",
+		Title:     "Spanish locale for Peru",
+		Language:  "Spanish",
+		Territory: "Peru",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_PE.utf8",
+		Title:     "Spanish locale for Peru",
+		Language:  "Spanish",
+		Territory: "Peru",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_PR",
+		Title:     "Spanish locale for Puerto Rico",
+		Language:  "Spanish",
+		Territory: "Puerto Rico",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_PR.utf8",
+		Title:     "Spanish locale for Puerto Rico",
+		Language:  "Spanish",
+		Territory: "Puerto Rico",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_PY",
+		Title:     "Spanish locale for Paraguay",
+		Language:  "Spanish",
+		Territory: "Paraguay",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_PY.utf8",
+		Title:     "Spanish locale for Paraguay",
+		Language:  "Spanish",
+		Territory: "Paraguay",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_SV",
+		Title:     "Spanish locale for El Salvador",
+		Language:  "Spanish",
+		Territory: "El Salvador",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_SV.utf8",
+		Title:     "Spanish locale for El Salvador",
+		Language:  "Spanish",
+		Territory: "El Salvador",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_US",
+		Title:     "Spanish locale for the USA",
+		Language:  "Spanish",
+		Territory: "USA",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_US.utf8",
+		Title:     "Spanish locale for the USA",
+		Language:  "Spanish",
+		Territory: "USA",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_UY",
+		Title:     "Spanish locale for Uruguay",
+		Language:  "Spanish",
+		Territory: "Uruguay",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_UY.utf8",
+		Title:     "Spanish locale for Uruguay",
+		Language:  "Spanish",
+		Territory: "Uruguay",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "es_VE",
+		Title:     "Spanish locale for Venezuela",
+		Language:  "Spanish",
+		Territory: "Venezuela",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "es_VE.utf8",
+		Title:     "Spanish locale for Venezuela",
+		Language:  "Spanish",
+		Territory: "Venezuela",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "et_EE",
+		Title:     "Estonian locale for Estonia",
+		Language:  "Estonian",
+		Territory: "Estonia",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "et_EE.iso885915",
+		Title:     "Estonian locale for Estonia",
+		Language:  "Estonian",
+		Territory: "Estonia",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "et_EE.utf8",
+		Title:     "Estonian locale for Estonia",
+		Language:  "Estonian",
+		Territory: "Estonia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "eu_ES",
+		Title:     "Basque locale for Spain",
+		Language:  "Basque",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "eu_ES@euro",
+		Title:     "Basque language locale for Spain with Euro",
+		Language:  "Basque",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "eu_ES.utf8",
+		Title:     "Basque locale for Spain",
+		Language:  "Basque",
+		Territory: "Spain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "eu_FR",
+		Title:     "Basque locale for France",
+		Language:  "Basque",
+		Territory: "France",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "eu_FR@euro",
+		Title:     "Basque locale for France",
+		Language:  "Basque",
+		Territory: "France",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "eu_FR.utf8",
+		Title:     "Basque locale for France",
+		Language:  "Basque",
+		Territory: "France",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fa_IR",
+		Title:     "Persian locale for Iran",
+		Language:  "Persian",
+		Territory: "Iran",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ff_SN",
+		Title:     "Fulah locale for Senegal",
+		Language:  "ff",
+		Territory: "Senegal",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fi_FI",
+		Title:     "Finnish locale for Finland",
+		Language:  "Finnish",
+		Territory: "Finland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "fi_FI@euro",
+		Title:     "Finnish locale for Finland with Euro",
+		Language:  "Finnish",
+		Territory: "Finland",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "fi_FI.utf8",
+		Title:     "Finnish locale for Finland",
+		Language:  "Finnish",
+		Territory: "Finland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fil_PH",
+		Title:     "Filipino language locale for Philippines",
+		Language:  "Filipino",
+		Territory: "Philippines",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fo_FO",
+		Title:     "Faroese locale for Faroe Islands",
+		Language:  "Faroese",
+		Territory: "Faroe Islands",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "fo_FO.utf8",
+		Title:     "Faroese locale for Faroe Islands",
+		Language:  "Faroese",
+		Territory: "Faroe Islands",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fr_BE",
+		Title:     "French locale for Belgium",
+		Language:  "French",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "fr_BE@euro",
+		Title:     "French locale for Belgium with Euro",
+		Language:  "French",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "fr_BE.utf8",
+		Title:     "French locale for Belgium",
+		Language:  "French",
+		Territory: "Belgium",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fr_CA",
+		Title:     "French locale for Canada",
+		Language:  "French",
+		Territory: "Canada",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "fr_CA.utf8",
+		Title:     "French locale for Canada",
+		Language:  "French",
+		Territory: "Canada",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fr_CH",
+		Title:     "French locale for Switzerland",
+		Language:  "French",
+		Territory: "Switzerland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "fr_CH.utf8",
+		Title:     "French locale for Switzerland",
+		Language:  "French",
+		Territory: "Switzerland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fr_FR",
+		Title:     "French locale for France",
+		Language:  "French",
+		Territory: "France",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "fr_FR@euro",
+		Title:     "French locale for France with Euro",
+		Language:  "French",
+		Territory: "France",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "fr_FR.utf8",
+		Title:     "French locale for France",
+		Language:  "French",
+		Territory: "France",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fr_LU",
+		Title:     "French locale for Luxemburg",
+		Language:  "French",
+		Territory: "Luxemburg",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "fr_LU@euro",
+		Title:     "French locale for Luxemburg with Euro",
+		Language:  "French",
+		Territory: "Luxemburg",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "fr_LU.utf8",
+		Title:     "French locale for Luxemburg",
+		Language:  "French",
+		Territory: "Luxemburg",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fur_IT",
+		Title:     "Furlan locale for Italy",
+		Language:  "Furlan",
+		Territory: "Italy",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fy_DE",
+		Title:     "Sater Frisian and North Frisian Locale for Germany",
+		Language:  "fy",
+		Territory: "DE",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "fy_NL",
+		Title:     "Frisian locale for the Netherlands",
+		Language:  "Frisian",
+		Territory: "Netherlands",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ga_IE",
+		Title:     "Irish locale for Ireland",
+		Language:  "Irish",
+		Territory: "Ireland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "ga_IE@euro",
+		Title:     "Irish locale for Ireland with Euro",
+		Language:  "Irish",
+		Territory: "Ireland",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "ga_IE.utf8",
+		Title:     "Irish locale for Ireland",
+		Language:  "Irish",
+		Territory: "Ireland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gd_GB",
+		Title:     "Scots Gaelic language locale for Great Britain",
+		Language:  "Scots Gaelic",
+		Territory: "Great Britain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "gd_GB.utf8",
+		Title:     "Scots Gaelic language locale for Great Britain",
+		Language:  "Scots Gaelic",
+		Territory: "Great Britain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gez_ER",
+		Title:     "Ge'ez language locale for Eritrea.",
+		Language:  "gez",
+		Territory: "ER",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gez_ER@abegede",
+		Title:     "Ge'ez language locale for Eritrea With Abegede Collation.",
+		Language:  "gez",
+		Territory: "ER",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gez_ET",
+		Title:     "Ge'ez language locale for Ethiopia",
+		Language:  "gez",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gez_ET@abegede",
+		Title:     "Ge'ez language locale for Ethiopia With Abegede Collation",
+		Language:  "gez",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gl_ES",
+		Title:     "Galician locale for Spain",
+		Language:  "Galician",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "gl_ES@euro",
+		Title:     "Galician locale for Spain with Euro",
+		Language:  "Galician",
+		Territory: "Spain",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "gl_ES.utf8",
+		Title:     "Galician locale for Spain",
+		Language:  "Galician",
+		Territory: "Spain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gu_IN",
+		Title:     "Gujarati Language Locale For India",
+		Language:  "Gujarati",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "gv_GB",
+		Title:     "Manx Gaelic locale for Britain",
+		Language:  "Manx Gaelic",
+		Territory: "Britain",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "gv_GB.utf8",
+		Title:     "Manx Gaelic locale for Britain",
+		Language:  "Manx Gaelic",
+		Territory: "Britain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hak_TW",
+		Title:     "Hakka Chinese locale for the Republic of China",
+		Language:  "Hakka Chinese",
+		Territory: "Republic of China",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ha_NG",
+		Title:     "Hausa locale for Nigeria",
+		Language:  "Hausa",
+		Territory: "Nigeria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "he_IL",
+		Title:     "Hebrew locale for Israel",
+		Language:  "Hebrew",
+		Territory: "Israel",
+		Codeset:   "ISO-8859-8",
+	},
+	&Locale{
+		Locale:    "he_IL.utf8",
+		Title:     "Hebrew locale for Israel",
+		Language:  "Hebrew",
+		Territory: "Israel",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hi_IN",
+		Title:     "Hindi language locale for India",
+		Language:  "Hindi",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hne_IN",
+		Title:     "Chhattisgarhi language locale for India",
+		Language:  "Chhattisgarhi",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hr_HR",
+		Title:     "Croatian locale for Croatia",
+		Language:  "Croatian",
+		Territory: "Croatia",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "hr_HR.utf8",
+		Title:     "Croatian locale for Croatia",
+		Language:  "Croatian",
+		Territory: "Croatia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hsb_DE",
+		Title:     "Upper Sorbian locale for Germany",
+		Language:  "Upper Sorbian",
+		Territory: "Germany",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "hsb_DE.utf8",
+		Title:     "Upper Sorbian locale for Germany",
+		Language:  "Upper Sorbian",
+		Territory: "Germany",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ht_HT",
+		Title:     "Kreyol locale for Haiti",
+		Language:  "Kreyol",
+		Territory: "Haiti",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hu_HU",
+		Title:     "Hungarian locale for Hungary",
+		Language:  "Hungarian",
+		Territory: "Hungary",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "hu_HU.utf8",
+		Title:     "Hungarian locale for Hungary",
+		Language:  "Hungarian",
+		Territory: "Hungary",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hy_AM",
+		Title:     "Armenian language locale for Armenia",
+		Language:  "Armenian",
+		Territory: "Armenia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "hy_AM.armscii8",
+		Title:     "ISO/IEC 14652 i18n FDCC-set",
+		Language:  "",
+		Territory: "ISO",
+		Codeset:   "ANSI_X3.4-1968",
+	},
+	&Locale{
+		Locale:    "ia_FR",
+		Title:     "Interlingua locale for France",
+		Language:  "Interlingua",
+		Territory: "France",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "id_ID",
+		Title:     "Indonesian locale for Indonesia",
+		Language:  "Indonesian",
+		Territory: "Indonesia",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "id_ID.utf8",
+		Title:     "Indonesian locale for Indonesia",
+		Language:  "Indonesian",
+		Territory: "Indonesia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ig_NG",
+		Title:     "Igbo locale for Nigeria",
+		Language:  "Igbo",
+		Territory: "Nigeria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ik_CA",
+		Title:     "Inupiaq locale for Canada",
+		Language:  "Inupiaq",
+		Territory: "Canada",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "is_IS",
+		Title:     "Icelandic locale for Iceland",
+		Language:  "Icelandic",
+		Territory: "Iceland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "is_IS.utf8",
+		Title:     "Icelandic locale for Iceland",
+		Language:  "Icelandic",
+		Territory: "Iceland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "it_CH",
+		Title:     "Italian locale for Switzerland",
+		Language:  "Italian",
+		Territory: "Switzerland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "it_CH.utf8",
+		Title:     "Italian locale for Switzerland",
+		Language:  "Italian",
+		Territory: "Switzerland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "it_IT",
+		Title:     "Italian locale for Italy",
+		Language:  "Italian",
+		Territory: "Italy",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "it_IT@euro",
+		Title:     "Italian locale for Italy with Euro",
+		Language:  "Italian",
+		Territory: "Italy",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "it_IT.utf8",
+		Title:     "Italian locale for Italy",
+		Language:  "Italian",
+		Territory: "Italy",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "iu_CA",
+		Title:     "Inuktitut language locale for Nunavut, Canada",
+		Language:  "Inuktitut",
+		Territory: "CA",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "iw_IL",
+		Title:     "Hebrew locale for Israel",
+		Language:  "Hebrew",
+		Territory: "Israel",
+		Codeset:   "ISO-8859-8",
+	},
+	&Locale{
+		Locale:    "iw_IL.utf8",
+		Title:     "Hebrew locale for Israel",
+		Language:  "Hebrew",
+		Territory: "Israel",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ja_JP.eucjp",
+		Title:     "Japanese language locale for Japan",
+		Language:  "Japanese",
+		Territory: "Japan",
+		Codeset:   "EUC-JP",
+	},
+	&Locale{
+		Locale:    "ja_JP.utf8",
+		Title:     "Japanese language locale for Japan",
+		Language:  "Japanese",
+		Territory: "Japan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ka_GE",
+		Title:     "Georgian language locale for Georgia",
+		Language:  "Georgian",
+		Territory: "Georgia",
+		Codeset:   "GEORGIAN-PS",
+	},
+	&Locale{
+		Locale:    "ka_GE.utf8",
+		Title:     "Georgian language locale for Georgia",
+		Language:  "Georgian",
+		Territory: "Georgia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "kk_KZ",
+		Title:     "Kazakh locale for Kazakhstan",
+		Language:  "Kazakh",
+		Territory: "Kazakhstan",
+		Codeset:   "RK1048",
+	},
+	&Locale{
+		Locale:    "kk_KZ.utf8",
+		Title:     "Kazakh locale for Kazakhstan",
+		Language:  "Kazakh",
+		Territory: "Kazakhstan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "kl_GL",
+		Title:     "Greenlandic locale for Greenland",
+		Language:  "Greenlandic",
+		Territory: "Greenland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "kl_GL.utf8",
+		Title:     "Greenlandic locale for Greenland",
+		Language:  "Greenlandic",
+		Territory: "Greenland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "km_KH",
+		Title:     "Khmer locale for Cambodia",
+		Language:  "Khmer",
+		Territory: "Cambodia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "kn_IN",
+		Title:     "Kannada language locale for India",
+		Language:  "Kannada",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "kok_IN",
+		Title:     "Konkani language locale for India",
+		Language:  "Konkani",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ko_KR.euckr",
+		Title:     "Korean locale for Republic of Korea",
+		Language:  "Korean",
+		Territory: "Republic of Korea",
+		Codeset:   "EUC-KR",
+	},
+	&Locale{
+		Locale:    "ko_KR.utf8",
+		Title:     "Korean locale for Republic of Korea",
+		Language:  "Korean",
+		Territory: "Republic of Korea",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ks_IN",
+		Title:     "Kashmiri language locale for India",
+		Language:  "Kashmiri",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ks_IN@devanagari",
+		Title:     "Kashmiri(devanagari) language locale for India",
+		Language:  "Kashmiri",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ku_TR",
+		Title:     "Kurdish (latin) locale for Turkey",
+		Language:  "Kurdish",
+		Territory: "Turkey",
+		Codeset:   "ISO-8859-9",
+	},
+	&Locale{
+		Locale:    "ku_TR.utf8",
+		Title:     "Kurdish (latin) locale for Turkey",
+		Language:  "Kurdish",
+		Territory: "Turkey",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "kw_GB",
+		Title:     "Cornish locale for Britain",
+		Language:  "Cornish",
+		Territory: "Britain",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "kw_GB.utf8",
+		Title:     "Cornish locale for Britain",
+		Language:  "Cornish",
+		Territory: "Britain",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ky_KG",
+		Title:     "Kyrgyz Language Locale for Kyrgyzstan",
+		Language:  "Kyrgyz",
+		Territory: "Kyrgyzstan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "lb_LU",
+		Title:     "Luxembourgish locale for Luxembourg",
+		Language:  "Luxembourgish",
+		Territory: "Luxembourg",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "lg_UG",
+		Title:     "Luganda locale for Uganda",
+		Language:  "Luganda",
+		Territory: "Uganda",
+		Codeset:   "ISO-8859-10",
+	},
+	&Locale{
+		Locale:    "lg_UG.utf8",
+		Title:     "Luganda locale for Uganda",
+		Language:  "Luganda",
+		Territory: "Uganda",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "li_BE",
+		Title:     "Limburgish Language Locale for Belgium",
+		Language:  "li",
+		Territory: "BE",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "lij_IT",
+		Title:     "Ligurian locale for Italy",
+		Language:  "Ligurian",
+		Territory: "Italy",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "li_NL",
+		Title:     "Limburgish Language Locale for the Netherlands",
+		Language:  "li",
+		Territory: "NL",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "lo_LA",
+		Title:     "Lao locale for Laos",
+		Language:  "Lao",
+		Territory: "Laos",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "lt_LT",
+		Title:     "Lithuanian locale for Lithuania",
+		Language:  "Lithuanian",
+		Territory: "Lithuania",
+		Codeset:   "ISO-8859-13",
+	},
+	&Locale{
+		Locale:    "lt_LT.utf8",
+		Title:     "Lithuanian locale for Lithuania",
+		Language:  "Lithuanian",
+		Territory: "Lithuania",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "lv_LV",
+		Title:     "Latvian locale for Latvia",
+		Language:  "Latvian",
+		Territory: "Latvia",
+		Codeset:   "ISO-8859-13",
+	},
+	&Locale{
+		Locale:    "lv_LV.utf8",
+		Title:     "Latvian locale for Latvia",
+		Language:  "Latvian",
+		Territory: "Latvia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "lzh_TW",
+		Title:     "Literary Chinese locale for the Republic of China",
+		Language:  "Literary Chinese",
+		Territory: "Republic of China",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mag_IN",
+		Title:     "Magahi language locale for India",
+		Language:  "Magahi",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mai_IN",
+		Title:     "Maithili language locale for India",
+		Language:  "Maithili",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mg_MG",
+		Title:     "Malagasy locale for Madagascar",
+		Language:  "Malagasy",
+		Territory: "Madagascar",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "mg_MG.utf8",
+		Title:     "Malagasy locale for Madagascar",
+		Language:  "Malagasy",
+		Territory: "Madagascar",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mhr_RU",
+		Title:     "Mari locale for Russia",
+		Language:  "Meadow Mari",
+		Territory: "Russia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mi_NZ",
+		Title:     "Maori language locale for New Zealand",
+		Language:  "Maori",
+		Territory: "New Zealand",
+		Codeset:   "ISO-8859-13",
+	},
+	&Locale{
+		Locale:    "mi_NZ.utf8",
+		Title:     "Maori language locale for New Zealand",
+		Language:  "Maori",
+		Territory: "New Zealand",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mk_MK",
+		Title:     "Macedonian locale for Macedonia",
+		Language:  "Macedonian",
+		Territory: "Macedonia",
+		Codeset:   "ISO-8859-5",
+	},
+	&Locale{
+		Locale:    "mk_MK.utf8",
+		Title:     "Macedonian locale for Macedonia",
+		Language:  "Macedonian",
+		Territory: "Macedonia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ml_IN",
+		Title:     "Malayalam language locale for India",
+		Language:  "Malayalam",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mni_IN",
+		Title:     "Manipuri language locale for India",
+		Language:  "Manipuri",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mn_MN",
+		Title:     "Mongolian locale for Mongolia",
+		Language:  "Mongolian",
+		Territory: "Mongolia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mr_IN",
+		Title:     "Marathi language locale for India",
+		Language:  "Marathi",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ms_MY",
+		Title:     "Malay language locale for Malaysia",
+		Language:  "Malay",
+		Territory: "Malaysia",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "ms_MY.utf8",
+		Title:     "Malay language locale for Malaysia",
+		Language:  "Malay",
+		Territory: "Malaysia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "mt_MT",
+		Title:     "Maltese language locale for Malta",
+		Language:  "Maltese",
+		Territory: "malta",
+		Codeset:   "ISO-8859-3",
+	},
+	&Locale{
+		Locale:    "mt_MT.utf8",
+		Title:     "Maltese language locale for Malta",
+		Language:  "Maltese",
+		Territory: "malta",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "my_MM",
+		Title:     "Burmese language locale for Myanmar",
+		Language:  "Burmese",
+		Territory: "Myanmar",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nan_TW",
+		Title:     "Min Nan Chinese locale for the Republic of China",
+		Language:  "Min Nan Chinese",
+		Territory: "Republic of China",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nan_TW@latin",
+		Title:     "Minnan language locale for Taiwan",
+		Language:  "Minnan",
+		Territory: "Taiwan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nb_NO",
+		Title:     "Norwegian (Bokmal) locale for Norway",
+		Language:  "Norwegian, Bokm\xe5l",
+		Territory: "Norway",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "nb_NO.utf8",
+		Title:     "Norwegian (Bokmal) locale for Norway",
+		Language:  "Norwegian, Bokmål",
+		Territory: "Norway",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nds_DE",
+		Title:     "Low(lands) Saxon Language Locale for Germany",
+		Language:  "nds",
+		Territory: "DE",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nds_NL",
+		Title:     "Low(lands) Saxon Language Locale for the Netherlands",
+		Language:  "nds",
+		Territory: "NL",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ne_NP",
+		Title:     "Nepali language locale for Nepal",
+		Language:  "Nepali",
+		Territory: "Nepal",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nhn_MX",
+		Title:     "Central Nahuatl for Mexico",
+		Language:  "Central Nahuatl",
+		Territory: "Mexico",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "niu_NU",
+		Title:     "Niuean (Vagahau Niue) locale for Niue",
+		Language:  "Vagahau Niue (Niuean)",
+		Territory: "Niue",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "niu_NZ",
+		Title:     "Niuean (Vagahau Niue) locale for New Zealand",
+		Language:  "Vagahau Niue (Niuean)",
+		Territory: "New Zealand",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nl_AW",
+		Title:     "Dutch language locale for Aruba",
+		Language:  "Dutch",
+		Territory: "Aruba",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nl_BE",
+		Title:     "Dutch locale for Belgium",
+		Language:  "Dutch",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "nl_BE@euro",
+		Title:     "Dutch locale for Belgium with Euro",
+		Language:  "Dutch",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "nl_BE.utf8",
+		Title:     "Dutch locale for Belgium",
+		Language:  "Dutch",
+		Territory: "Belgium",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nl_NL",
+		Title:     "Dutch locale for the Netherlands",
+		Language:  "Dutch",
+		Territory: "Netherlands",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "nl_NL@euro",
+		Title:     "Dutch locale for the Netherlands with Euro",
+		Language:  "Dutch",
+		Territory: "Netherlands",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "nl_NL.utf8",
+		Title:     "Dutch locale for the Netherlands",
+		Language:  "Dutch",
+		Territory: "Netherlands",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nn_NO",
+		Title:     "Nynorsk language locale for Norway",
+		Language:  "Norwegian, Nynorsk",
+		Territory: "Norway",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "nn_NO.utf8",
+		Title:     "Nynorsk language locale for Norway",
+		Language:  "Norwegian, Nynorsk",
+		Territory: "Norway",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nr_ZA",
+		Title:     "Southern Ndebele locale for South Africa",
+		Language:  "Southern Ndebele",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "nso_ZA",
+		Title:     "Northern Sotho locale for South Africa",
+		Language:  "Northern Sotho",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "oc_FR",
+		Title:     "Occitan Language Locale for France",
+		Language:  "Occitan",
+		Territory: "France",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "oc_FR.utf8",
+		Title:     "Occitan Language Locale for France",
+		Language:  "Occitan",
+		Territory: "France",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "om_ET",
+		Title:     "Oromo language locale for Ethiopia.",
+		Language:  "om",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "om_KE",
+		Title:     "Oromo language locale for Kenya.",
+		Language:  "om",
+		Territory: "KE",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "om_KE.utf8",
+		Title:     "Oromo language locale for Kenya.",
+		Language:  "om",
+		Territory: "KE",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "or_IN",
+		Title:     "Odia language locale for India",
+		Language:  "Odia",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "os_RU",
+		Title:     "Ossetian locale for Russia",
+		Language:  "Ossetian",
+		Territory: "Russia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pa_IN",
+		Title:     "Punjabi language locale for Indian Punjabi(Gurmukhi)",
+		Language:  "Punjabi",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pap_AN",
+		Title:     "Papiamento Language for the (Netherland) Antilles",
+		Language:  "pap",
+		Territory: "AN",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pap_AW",
+		Title:     "Papiamento Language for Aruba",
+		Language:  "pap",
+		Territory: "AW",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pap_CW",
+		Title:     "Papiamento language for Curaçao",
+		Language:  "pap",
+		Territory: "CW",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pa_PK",
+		Title:     "Punjabi (Shahmukhi) Language Locale for Pakistan",
+		Language:  "Punjabi (Shahmukhi)",
+		Territory: "Pakistan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pl_PL",
+		Title:     "Polish locale for Poland",
+		Language:  "Polish",
+		Territory: "Poland",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "pl_PL.utf8",
+		Title:     "Polish locale for Poland",
+		Language:  "Polish",
+		Territory: "Poland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "POSIX",
+		Title:     "ISO/IEC 14652 i18n FDCC-set",
+		Language:  "",
+		Territory: "ISO",
+		Codeset:   "ANSI_X3.4-1968",
+	},
+	&Locale{
+		Locale:    "ps_AF",
+		Title:     "Pashto locale for Afghanistan",
+		Language:  "Pashto",
+		Territory: "Afghanistan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pt_BR",
+		Title:     "Portuguese locale for Brasil",
+		Language:  "Portuguese",
+		Territory: "Brasil",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "pt_BR.utf8",
+		Title:     "Portuguese locale for Brasil",
+		Language:  "Portuguese",
+		Territory: "Brasil",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "pt_PT",
+		Title:     "Portuguese locale for Portugal",
+		Language:  "Portuguese",
+		Territory: "Portugal",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "pt_PT@euro",
+		Title:     "Portuguese locale for Portugal with Euro",
+		Language:  "Portuguese",
+		Territory: "Portugal",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "pt_PT.utf8",
+		Title:     "Portuguese locale for Portugal",
+		Language:  "Portuguese",
+		Territory: "Portugal",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "quz_PE",
+		Title:     "Quechua (Cusco-Collao) locale for Peru",
+		Language:  "Quechua (Cusco-Collao)",
+		Territory: "Peru",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ro_RO",
+		Title:     "Romanian locale for Romania",
+		Language:  "Romanian",
+		Territory: "Romania",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "ro_RO.utf8",
+		Title:     "Romanian locale for Romania",
+		Language:  "Romanian",
+		Territory: "Romania",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ru_RU",
+		Title:     "Russian locale for Russia",
+		Language:  "Russian",
+		Territory: "Russia",
+		Codeset:   "ISO-8859-5",
+	},
+	&Locale{
+		Locale:    "ru_RU.cp1251",
+		Title:     "Russian locale for Russia",
+		Language:  "Russian",
+		Territory: "Russia",
+		Codeset:   "CP1251",
+	},
+	&Locale{
+		Locale:    "ru_RU.koi8r",
+		Title:     "Russian locale for Russia",
+		Language:  "Russian",
+		Territory: "Russia",
+		Codeset:   "KOI8-R",
+	},
+	&Locale{
+		Locale:    "ru_RU.utf8",
+		Title:     "Russian locale for Russia",
+		Language:  "Russian",
+		Territory: "Russia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ru_UA",
+		Title:     "Russian locale for Ukraine",
+		Language:  "Russian",
+		Territory: "Ukraine",
+		Codeset:   "KOI8-U",
+	},
+	&Locale{
+		Locale:    "ru_UA.utf8",
+		Title:     "Russian locale for Ukraine",
+		Language:  "Russian",
+		Territory: "Ukraine",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "rw_RW",
+		Title:     "Kinyarwanda language locale for Rwanda",
+		Language:  "Kinyarwanda",
+		Territory: "Rwanda",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sa_IN",
+		Title:     "Sanskrit language locale for India",
+		Language:  "Sanskrit",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sat_IN",
+		Title:     "Santali language locale for India",
+		Language:  "Santali",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sc_IT",
+		Title:     "Sardinian locale for Italy",
+		Language:  "Sardinian",
+		Territory: "Italy",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sd_IN",
+		Title:     "Sindhi language locale for India",
+		Language:  "Sindhi",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sd_IN@devanagari",
+		Title:     "Sindhi language locale for India",
+		Language:  "Sindhi",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "se_NO",
+		Title:     "Northern Saami language locale for Norway",
+		Language:  "Northern Saami",
+		Territory: "Norway",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "shs_CA",
+		Title:     "Secwepemctsin locale for Canada",
+		Language:  "Secwepemctsin",
+		Territory: "Canada",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sid_ET",
+		Title:     "Sidama language locale for Ethiopia.",
+		Language:  "sid",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "si_LK",
+		Title:     "Sinhala language locale for Sri Lanka",
+		Language:  "Sinhala",
+		Territory: "Sri Lanka",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sk_SK",
+		Title:     "Slovak locale for Slovak",
+		Language:  "Slovak",
+		Territory: "Slovak",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "sk_SK.utf8",
+		Title:     "Slovak locale for Slovak",
+		Language:  "Slovak",
+		Territory: "Slovak",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sl_SI",
+		Title:     "Slovenian locale for Slovenia",
+		Language:  "Slovenian",
+		Territory: "Slovenia",
+		Codeset:   "ISO-8859-2",
+	},
+	&Locale{
+		Locale:    "sl_SI.utf8",
+		Title:     "Slovenian locale for Slovenia",
+		Language:  "Slovenian",
+		Territory: "Slovenia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "so_DJ",
+		Title:     "Somali language locale for Djibouti.",
+		Language:  "so",
+		Territory: "DJ",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "so_DJ.utf8",
+		Title:     "Somali language locale for Djibouti.",
+		Language:  "so",
+		Territory: "DJ",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "so_ET",
+		Title:     "Somali language locale for Ethiopia",
+		Language:  "so",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "so_KE",
+		Title:     "Somali language locale for Kenya",
+		Language:  "so",
+		Territory: "KE",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "so_KE.utf8",
+		Title:     "Somali language locale for Kenya",
+		Language:  "so",
+		Territory: "KE",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "so_SO",
+		Title:     "Somali language locale for Somalia",
+		Language:  "so",
+		Territory: "SO",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "so_SO.utf8",
+		Title:     "Somali language locale for Somalia",
+		Language:  "so",
+		Territory: "SO",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sq_AL",
+		Title:     "Albanian language locale for Albania",
+		Language:  "Albanian",
+		Territory: "Albania",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "sq_AL.utf8",
+		Title:     "Albanian language locale for Albania",
+		Language:  "Albanian",
+		Territory: "Albania",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sq_MK",
+		Title:     "Albanian language locale for Macedonia",
+		Language:  "Albanian",
+		Territory: "Macedonia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sr_ME",
+		Title:     "Serbian locale for Montenegro",
+		Language:  "Serbian",
+		Territory: "Montenegro",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sr_RS",
+		Title:     "Serbian locale for Serbia",
+		Language:  "Serbian",
+		Territory: "Serbia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sr_RS@latin",
+		Title:     "Serbian Latin locale for Serbia",
+		Language:  "Serbian",
+		Territory: "Serbia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ss_ZA",
+		Title:     "Swati locale for South Africa",
+		Language:  "Swati",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "st_ZA",
+		Title:     "Sotho locale for South Africa",
+		Language:  "Sotho",
+		Territory: "South Africa",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "st_ZA.utf8",
+		Title:     "Sotho locale for South Africa",
+		Language:  "Sotho",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sv_FI",
+		Title:     "Swedish locale for Finland",
+		Language:  "Swedish",
+		Territory: "Finland",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "sv_FI@euro",
+		Title:     "Swedish locale for Finland with Euro",
+		Language:  "Swedish",
+		Territory: "Finland",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "sv_FI.utf8",
+		Title:     "Swedish locale for Finland",
+		Language:  "Swedish",
+		Territory: "Finland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sv_SE",
+		Title:     "Swedish locale for Sweden",
+		Language:  "Swedish",
+		Territory: "Sweden",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "sv_SE.iso885915",
+		Title:     "Swedish locale for Sweden",
+		Language:  "Swedish",
+		Territory: "Sweden",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "sv_SE.utf8",
+		Title:     "Swedish locale for Sweden",
+		Language:  "Swedish",
+		Territory: "Sweden",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sw_KE",
+		Title:     "Swahili locale for Kenya",
+		Language:  "sw",
+		Territory: "Kenya",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "sw_TZ",
+		Title:     "Swahili locale for Tanzania",
+		Language:  "sw",
+		Territory: "Tanzania",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "szl_PL",
+		Title:     "Silesian locale for Poland",
+		Language:  "Silesian",
+		Territory: "Poland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ta_IN",
+		Title:     "Tamil language locale for India",
+		Language:  "Tamil",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ta_LK",
+		Title:     "Tamil language locale for Sri Lanka",
+		Language:  "Tamil",
+		Territory: "Sri Lanka",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "te_IN",
+		Title:     "Telugu language locale for India",
+		Language:  "Telugu",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tg_TJ",
+		Title:     "Tajik language locale for Tajikistan",
+		Language:  "Tajik",
+		Territory: "Tajikistan",
+		Codeset:   "KOI8-T",
+	},
+	&Locale{
+		Locale:    "tg_TJ.utf8",
+		Title:     "Tajik language locale for Tajikistan",
+		Language:  "Tajik",
+		Territory: "Tajikistan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "the_NP",
+		Title:     "Tharu language locale for Nepal",
+		Language:  "Chitwania Tharu",
+		Territory: "Nepal",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "th_TH",
+		Title:     "Thai locale for Thailand",
+		Language:  "Thai",
+		Territory: "Thailand",
+		Codeset:   "TIS-620",
+	},
+	&Locale{
+		Locale:    "th_TH.utf8",
+		Title:     "Thai locale for Thailand",
+		Language:  "Thai",
+		Territory: "Thailand",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ti_ER",
+		Title:     "Tigrigna language locale for Eritrea.",
+		Language:  "ti",
+		Territory: "ER",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ti_ET",
+		Title:     "Tigrigna language locale for Ethiopia.",
+		Language:  "ti",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tig_ER",
+		Title:     "Tigre language locale for Eritrea",
+		Language:  "tig",
+		Territory: "ER",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tk_TM",
+		Title:     "Turkmen locale for Turkmenistan",
+		Language:  "Turkmen",
+		Territory: "Turkmenistan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tl_PH",
+		Title:     "Tagalog language locale for Philippines",
+		Language:  "Tagalog",
+		Territory: "Philippines",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "tl_PH.utf8",
+		Title:     "Tagalog language locale for Philippines",
+		Language:  "Tagalog",
+		Territory: "Philippines",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tn_ZA",
+		Title:     "Tswana locale for South Africa",
+		Language:  "Tswana",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tr_CY",
+		Title:     "Turkish language locale for Cyprus",
+		Language:  "Turkish",
+		Territory: "Cyprus",
+		Codeset:   "ISO-8859-9",
+	},
+	&Locale{
+		Locale:    "tr_CY.utf8",
+		Title:     "Turkish language locale for Cyprus",
+		Language:  "Turkish",
+		Territory: "Cyprus",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tr_TR",
+		Title:     "Turkish locale for Turkey",
+		Language:  "Turkish",
+		Territory: "Turkey",
+		Codeset:   "ISO-8859-9",
+	},
+	&Locale{
+		Locale:    "tr_TR.utf8",
+		Title:     "Turkish locale for Turkey",
+		Language:  "Turkish",
+		Territory: "Turkey",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ts_ZA",
+		Title:     "Tsonga locale for South Africa",
+		Language:  "Tsonga",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tt_RU",
+		Title:     "Tatar language locale for Russia",
+		Language:  "Tatar",
+		Territory: "Russia",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "tt_RU@iqtelif",
+		Title:     "Tatar language locale using IQTElif alphabet; for Tatarstan, Russian Federation",
+		Language:  "Tatar",
+		Territory: "Tatarstan, Russian Federation",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ug_CN",
+		Title:     "Uyghur locale for China",
+		Language:  "Uyghur",
+		Territory: "China",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "uk_UA",
+		Title:     "Ukrainian Language Locale for Ukraine",
+		Language:  "uk",
+		Territory: "UA",
+		Codeset:   "KOI8-U",
+	},
+	&Locale{
+		Locale:    "uk_UA.utf8",
+		Title:     "Ukrainian Language Locale for Ukraine",
+		Language:  "uk",
+		Territory: "UA",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "unm_US",
+		Title:     "Unami Delaware locale for the USA",
+		Language:  "Unami Delaware",
+		Territory: "USA",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ur_IN",
+		Title:     "Urdu language locale for India",
+		Language:  "Urdu",
+		Territory: "India",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ur_PK",
+		Title:     "Urdu Language Locale for Pakistan",
+		Language:  "Urdu",
+		Territory: "Pakistan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "uz_UZ",
+		Title:     "Uzbek (latin) locale for Uzbekistan",
+		Language:  "Uzbek",
+		Territory: "Uzbekistan",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "uz_UZ@cyrillic",
+		Title:     "Uzbek (cyrillic) locale for Uzbekistan",
+		Language:  "Uzbek",
+		Territory: "Uzbekistan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "uz_UZ.utf8",
+		Title:     "Uzbek (latin) locale for Uzbekistan",
+		Language:  "Uzbek",
+		Territory: "Uzbekistan",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "ve_ZA",
+		Title:     "Venda locale for South Africa",
+		Language:  "Venda",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "vi_VN",
+		Title:     "Vietnamese language locale for Vietnam",
+		Language:  "Vietnamese",
+		Territory: "Vietnam",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "wa_BE",
+		Title:     "Walloon Language Locale for Belgium",
+		Language:  "Walloon",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "wa_BE@euro",
+		Title:     "Walloon locale for Belgium with Euro",
+		Language:  "Walloon",
+		Territory: "Belgium",
+		Codeset:   "ISO-8859-15",
+	},
+	&Locale{
+		Locale:    "wa_BE.utf8",
+		Title:     "Walloon Language Locale for Belgium",
+		Language:  "Walloon",
+		Territory: "Belgium",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "wae_CH",
+		Title:     "Walser locale for Switzerland",
+		Language:  "Walser",
+		Territory: "Switzerland",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "wal_ET",
+		Title:     "Walaita language locale for Ethiopia.",
+		Language:  "wal",
+		Territory: "ET",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "wo_SN",
+		Title:     "Wolof locale for Senegal",
+		Language:  "Wolof",
+		Territory: "Senegal",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "xh_ZA",
+		Title:     "Xhosa locale for South Africa",
+		Language:  "Xhosa",
+		Territory: "South Africa",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "xh_ZA.utf8",
+		Title:     "Xhosa locale for South Africa",
+		Language:  "Xhosa",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "yi_US",
+		Title:     "Yiddish Language locale for the USA",
+		Language:  "Yiddish",
+		Territory: "USA",
+		Codeset:   "CP1255",
+	},
+	&Locale{
+		Locale:    "yi_US.utf8",
+		Title:     "Yiddish Language locale for the USA",
+		Language:  "Yiddish",
+		Territory: "USA",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "yo_NG",
+		Title:     "Yoruba locale for Nigeria",
+		Language:  "Yoruba",
+		Territory: "Nigeria",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "yue_HK",
+		Title:     "Yue Chinese (Cantonese) language locale for Hong Kong",
+		Language:  "Yue Chinese",
+		Territory: "Hong Kong",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "zh_CN",
+		Title:     "Chinese locale for Peoples Republic of China",
+		Language:  "Chinese",
+		Territory: "P.R. of China",
+		Codeset:   "GB2312",
+	},
+	&Locale{
+		Locale:    "zh_CN.gb18030",
+		Title:     "Chinese locale for Peoples Republic of China",
+		Language:  "Chinese",
+		Territory: "P.R. of China",
+		Codeset:   "GB18030",
+	},
+	&Locale{
+		Locale:    "zh_CN.gbk",
+		Title:     "Chinese locale for Peoples Republic of China",
+		Language:  "Chinese",
+		Territory: "P.R. of China",
+		Codeset:   "GBK",
+	},
+	&Locale{
+		Locale:    "zh_CN.utf8",
+		Title:     "Chinese locale for Peoples Republic of China",
+		Language:  "Chinese",
+		Territory: "P.R. of China",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "zh_HK",
+		Title:     "Chinese language locale for Hong Kong",
+		Language:  "Chinese",
+		Territory: "Hong Kong",
+		Codeset:   "BIG5-HKSCS",
+	},
+	&Locale{
+		Locale:    "zh_HK.utf8",
+		Title:     "Chinese language locale for Hong Kong",
+		Language:  "Chinese",
+		Territory: "Hong Kong",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "zh_SG",
+		Title:     "Chinese language locale for Singapore",
+		Language:  "Chinese",
+		Territory: "Singapore",
+		Codeset:   "GB2312",
+	},
+	&Locale{
+		Locale:    "zh_SG.gbk",
+		Title:     "Chinese language locale for Singapore",
+		Language:  "Chinese",
+		Territory: "Singapore",
+		Codeset:   "GBK",
+	},
+	&Locale{
+		Locale:    "zh_SG.utf8",
+		Title:     "Chinese language locale for Singapore",
+		Language:  "Chinese",
+		Territory: "Singapore",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "zh_TW",
+		Title:     "Chinese locale for Taiwan R.O.C.",
+		Language:  "Chinese",
+		Territory: "Taiwan R.O.C.",
+		Codeset:   "BIG5",
+	},
+	&Locale{
+		Locale:    "zh_TW.euctw",
+		Title:     "Chinese locale for Taiwan R.O.C.",
+		Language:  "Chinese",
+		Territory: "Taiwan R.O.C.",
+		Codeset:   "EUC-TW",
+	},
+	&Locale{
+		Locale:    "zh_TW.utf8",
+		Title:     "Chinese locale for Taiwan R.O.C.",
+		Language:  "Chinese",
+		Territory: "Taiwan R.O.C.",
+		Codeset:   "UTF-8",
+	},
+	&Locale{
+		Locale:    "zu_ZA",
+		Title:     "Zulu locale for South Africa",
+		Language:  "Zulu",
+		Territory: "South Africa",
+		Codeset:   "ISO-8859-1",
+	},
+	&Locale{
+		Locale:    "zu_ZA.utf8",
+		Title:     "Zulu locale for South Africa",
+		Language:  "Zulu",
+		Territory: "South Africa",
+		Codeset:   "UTF-8",
+	},
+}
 
-	if err != nil {
-		return nil, err
+func (l *Locale) String() string {
+	return fmt.Sprintf("%s: %s, %s (%s)", l.Locale, l.Language, l.Territory, l.Codeset)
+}
+
+func GetLocale(prefix string) []*Locale {
+	var out []*Locale
+	for _, l := range locales {
+		if strings.HasPrefix(l.Locale, prefix) {
+			out = append(out, l)
+		}
 	}
-
-	matches := match.FindAllString(Locale, -1)
-
-	if len(matches) == 0 {
-		return nil, errors.New("No such locale")
-	}
-
-	return matches, nil
+	return out
 }
 
 func ValidateLocale(l string) error {
-	_, err := GetLocale(l)
-	return err
+	list := GetLocale(l)
+	if len(list) == 0 {
+		return errors.New("No such locale")
+	}
+	return nil
 }
