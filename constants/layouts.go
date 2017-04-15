@@ -6,9 +6,13 @@ import (
 	"strings"
 )
 
+// Layout represents keyboard layout
 type Layout struct {
-	Locales     []string
-	Layout      string
+	// Locales is a list of locales which could be used in pair with this layout
+	Locales []string
+	// Layout code
+	Layout string
+	// Description is a human readable description
 	Description string
 }
 
@@ -59,8 +63,10 @@ var layouts = []*Layout{
 	&Layout{[]string{"uk"}, "ua", "Ukrainian"},
 }
 
+// LocaleList represents a slice of Layout with Strings method bound to it
 type LayoutList []*Layout
 
+// Strings returns slice of string descriptions
 func (list LayoutList) Strings() []string {
 	out := make([]string, len(list))
 	for i, l := range list {
@@ -69,6 +75,7 @@ func (list LayoutList) Strings() []string {
 	return out
 }
 
+// GetLayout returns list of layouts for given layout and locale prefixes
 func GetLayout(locale, layout string) LayoutList {
 	var result LayoutList
 
@@ -88,10 +95,12 @@ func GetLayout(locale, layout string) LayoutList {
 	return result
 }
 
+// String returns human readable string representation for menus etc
 func (l *Layout) String() string {
 	return fmt.Sprintf("%s: %s", l.Layout, l.Description)
 }
 
+// ValidateLayout is a helper function for dialogs
 func ValidateLayout(locale, layout string) error {
 	list := GetLayout(locale, layout)
 	if len(list) == 0 {

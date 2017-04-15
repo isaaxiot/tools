@@ -6,12 +6,18 @@ import (
 	"strings"
 )
 
+// Locale representation
 type Locale struct {
-	Locale    string
-	Title     string
-	Language  string
+	// Locale represents full locale name like en_US.utf8
+	Locale string
+	// Title represents human readable title from locale database
+	Title string
+	// Language code
+	Language string
+	// Territory code
 	Territory string
-	Codeset   string
+	// Codeset code
+	Codeset string
 }
 
 var locales = []*Locale{
@@ -3328,12 +3334,15 @@ var locales = []*Locale{
 	},
 }
 
+// String returns human readable string representation for menus etc
 func (l *Locale) String() string {
 	return fmt.Sprintf("%s: %s, %s (%s)", l.Locale, l.Language, l.Territory, l.Codeset)
 }
 
+// LocaleList represents a slice of Locale with Strings method bound to it
 type LocaleList []*Locale
 
+// Strings returns slice of string descriptions
 func (list LocaleList) Strings() []string {
 	out := make([]string, len(list))
 	for i, l := range list {
@@ -3342,6 +3351,7 @@ func (list LocaleList) Strings() []string {
 	return out
 }
 
+// GetLocale returns list of locales for given prefix
 func GetLocale(prefix string) LocaleList {
 	var out LocaleList
 	for _, l := range locales {
@@ -3352,6 +3362,7 @@ func GetLocale(prefix string) LocaleList {
 	return out
 }
 
+// ValidateLocale is a helper function for dialogs
 func ValidateLocale(l string) error {
 	list := GetLocale(l)
 	if len(list) == 0 {
