@@ -3332,8 +3332,18 @@ func (l *Locale) String() string {
 	return fmt.Sprintf("%s: %s, %s (%s)", l.Locale, l.Language, l.Territory, l.Codeset)
 }
 
-func GetLocale(prefix string) []*Locale {
-	var out []*Locale
+type LocaleList []*Locale
+
+func (list LocaleList) Strings() []string {
+	out := make([]string, len(list))
+	for i, l := range list {
+		out[i] = l.String()
+	}
+	return out
+}
+
+func GetLocale(prefix string) LocaleList {
+	var out LocaleList
 	for _, l := range locales {
 		if strings.HasPrefix(l.Locale, prefix) {
 			out = append(out, l)
