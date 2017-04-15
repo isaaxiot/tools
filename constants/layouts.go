@@ -63,7 +63,7 @@ var layouts = []*Layout{
 	&Layout{[]string{"uk"}, "ua", "Ukrainian"},
 }
 
-// LocaleList represents a slice of Layout with Strings method bound to it
+// LayoutList represents a slice of Layout with Strings method bound to it
 type LayoutList []*Layout
 
 // Strings returns slice of string descriptions
