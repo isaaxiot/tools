@@ -104,12 +104,38 @@ func YesNoDialog(question string) bool {
 	return strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes")
 }
 
+type YesNoAnswer int
+
+const (
+	AnswerNo YesNoAnswer = iota
+	AnswerYes
+	AnswerBack
+)
+
+func YesNoBackDialog(question string) YesNoAnswer {
+	answer := GetSingleAnswer(question+" (\x1b[33my/yes\x1b[0m, \x1b[33mn/no\x1b[0m or \x1b[33mb/back\x1b[0m):",
+		YesNoBackValidator)
+
+	switch {
+	case strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes"):
+		return AnswerYes
+	case strings.EqualFold(answer, "n") || strings.EqualFold(answer, "no"):
+		return AnswerNo
+	default:
+		return AnswerBack
+	}
+}
+
+func printMenuItem(i int, v interface{}) {
+	fmt.Printf("   \x1b[33m[%d]\x1b[0m %v\n", i, v)
+}
+
 func SelectOneDialog(question string, opts []string) int {
 	reader := bufio.NewReader(Handler.GetRead())
 	retries := 3
 
 	for i, v := range opts {
-		fmt.Printf("   \x1b[33m[%d]\x1b[0m %s\n", i+1, v)
+		printMenuItem(i+1, v)
 	}
 
 	for retries > 0 {
@@ -125,6 +151,42 @@ func SelectOneDialog(question string, opts []string) int {
 
 		inp, err := strconv.Atoi(strings.TrimSpace(answer))
 		if err != nil || inp < 1 || inp > len(opts) {
+			fmt.Println("[-] Invalid user input, ", err, " please repeat: ")
+			continue
+		}
+
+		return inp - 1
+	}
+
+	fmt.Println("\n[-] You reached maximum number of retries")
+	os.Exit(3)
+	return 0
+}
+
+// SelectOneDialogWithBack returns -1 when "go back" choosen
+func SelectOneDialogWithBack(question string, opts []string) int {
+	reader := bufio.NewReader(Handler.GetRead())
+	retries := 3
+
+	for i, v := range opts {
+		printMenuItem(i+1, v)
+	}
+
+	printMenuItem(0, "Go Back")
+
+	for retries > 0 {
+		retries--
+		fmt.Print("[?] ", question)
+
+		answer, err := reader.ReadString('\n')
+		if err != nil {
+			log.Error(err.Error())
+			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
+			continue
+		}
+
+		inp, err := strconv.Atoi(strings.TrimSpace(answer))
+		if err != nil || inp < 0 || inp > len(opts) {
 			fmt.Println("[-] Invalid user input, ", err, " please repeat: ")
 			continue
 		}
