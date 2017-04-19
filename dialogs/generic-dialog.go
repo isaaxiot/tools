@@ -14,6 +14,8 @@ import (
 
 var Handler DialogHandler
 
+const Retries = 5
+
 type DialogHandler struct {
 	Reader io.Reader
 }
@@ -27,7 +29,7 @@ func (d *DialogHandler) GetRead() io.Reader {
 
 func GetSingleAnswer(question string, validators ...ValidatorFn) string {
 	reader := bufio.NewReader(Handler.GetRead())
-	retries := 3
+	retries := Retries
 	fmt.Print("[?] ", question)
 
 Loop:
@@ -61,7 +63,7 @@ Loop:
 
 func GetSingleNumber(question string, validators ...NumberValidatorFn) int {
 	reader := bufio.NewReader(Handler.GetRead())
-	retries := 3
+	retries := Retries
 	fmt.Print("[?] ", question)
 
 Loop:
@@ -106,7 +108,7 @@ func YesNoDialog(question string) bool {
 
 func SelectOneDialog(question string, opts []string) int {
 	reader := bufio.NewReader(Handler.GetRead())
-	retries := 3
+	retries := Retries
 
 	for i, v := range opts {
 		fmt.Printf("   \x1b[33m[%d]\x1b[0m %s\n", i+1, v)
