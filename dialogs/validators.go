@@ -31,12 +31,31 @@ func IpAddressValidator(inp string) bool {
 	return false
 }
 
+func IpAddressBackValidator(inp string) bool {
+	if inp == "-" {
+		return true
+	}
+
+	return IpAddressValidator(inp)
+}
+
 func YesNoValidator(inp string) bool {
 	if strings.EqualFold(inp, "y") || strings.EqualFold(inp, "yes") ||
 		strings.EqualFold(inp, "n") || strings.EqualFold(inp, "no") {
 		return true
 	} else {
 		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m): ")
+		return false
+	}
+}
+
+func YesNoBackValidator(inp string) bool {
+	if strings.EqualFold(inp, "y") || strings.EqualFold(inp, "yes") ||
+		strings.EqualFold(inp, "n") || strings.EqualFold(inp, "no") ||
+		strings.EqualFold(inp, "b") || strings.EqualFold(inp, "back") {
+		return true
+	} else {
+		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m, \x1b[33mn/no\x1b[0m or \x1b[33mb/back\x1b[0m): ")
 		return false
 	}
 }
