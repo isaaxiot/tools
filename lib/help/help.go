@@ -68,6 +68,10 @@ func GetExtractCommand(file string) string {
 	if HasAnySuffixes(file, ".tar.gz", ".tgz", ".tar.bz2", ".tbz", ".tar.xz") {
 		return "tar xvf %s -C %s"
 	}
+	if strings.HasSuffix(file, ".7z") {
+		// `/tmp/` is a workaround for the file destination
+		return "7z x %s -aos -o%s && 7za l /tmp/" + file + " *.img"
+	}
 	if strings.HasSuffix(file, "img.xz") {
 		file = file[:len(file)-3]
 		return "xz -dc %s > %s" + file + " && echo " + file
