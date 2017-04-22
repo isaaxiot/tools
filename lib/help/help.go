@@ -810,7 +810,7 @@ func GenericRunOverSsh(command, ip, user, password, port string, sudo bool, verb
 		fmt.Println("[-] Error running command : ", command, " err msg:", eut)
 	}
 
-	return out, nil
+	return out, err
 }
 
 // Run ssh echo password | sudo command with timeout
