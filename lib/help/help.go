@@ -604,8 +604,8 @@ func Unzip(src, dest string) error {
 	tokens := strings.Split(src, "/")
 	fileName := tokens[len(tokens)-1]
 	// create destination dir with 0777 access rights
-	CreateDir(dest)
-
+	//CreateDir(dest)
+	os.Mkdir(dest, os.ModePerm)
 	r, err := zip.OpenReader(src)
 	if err != nil {
 		return err
