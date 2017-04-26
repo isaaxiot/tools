@@ -629,19 +629,19 @@ func Unzip(src, dest string) error {
 		defer rc.Close()
 		fpath := filepath.Join(dest, f.Name)
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(fpath, f.Mode())
+			os.MkdirAll(fpath, os.ModePerm)
 		} else {
 			var fdir string
 			if lastIndex := strings.LastIndex(fpath, string(os.PathSeparator)); lastIndex > -1 {
 				fdir = fpath[:lastIndex]
 			}
-			err = os.MkdirAll(fdir, f.Mode())
+			err = os.MkdirAll(fdir, os.ModePerm)
 			if err != nil {
 				fmt.Println("[-] ", err.Error())
 				return err
 			}
 			dst_f, err := os.OpenFile(
-				fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+				fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 			if err != nil {
 				fmt.Println("[-] ", err.Error())
 				return err
