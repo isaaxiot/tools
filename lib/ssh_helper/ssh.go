@@ -114,6 +114,7 @@ func (s *config) ScpFromServer(src, dst string) error {
 		Auth: []ssh.AuthMethod{
 			ssh.Password(s.SSH.Password),
 		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	client, err := ssh.Dial("tcp", s.SSH.Server+":"+s.SSH.Port, clientConfig)
 	if err != nil {
