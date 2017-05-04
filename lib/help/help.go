@@ -712,7 +712,7 @@ func LocalIfaces() ([]Iface, error) {
 			case *net.IPAddr:
 				ip = v.IP
 			}
-			if !ip.IsLoopback() && ip.To4() != nil {
+			if !ip.IsLoopback() && ip.To4() != nil && iface.HardwareAddr.String() != "" {
 				face.Ipv4 = ip.To4().String()
 				face.HardwareAddr = iface.HardwareAddr.String()
 				face.Name = iface.Name
