@@ -136,7 +136,7 @@ func printColored(str string) string {
 }
 
 func printMenuItem(i int, v interface{}) {
-	fmt.Printf("   ["+printColored("[%d]")+"] %v\n", i, v)
+	fmt.Printf("   "+printColored("[%d]")+" %v\n", i, v)
 }
 
 func SelectOneDialog(question string, opts []string) int {
