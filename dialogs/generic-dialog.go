@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
-
+	"runtime"
 	"strconv"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -102,7 +102,7 @@ Loop:
 }
 
 func YesNoDialog(question string) bool {
-	answer := GetSingleAnswer(question+" (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m):", YesNoValidator)
+	answer := GetSingleAnswer(question+" ("+printColored("y/yes")+", "+printColored("n/no")+"): ", YesNoValidator)
 	return strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes")
 }
 
@@ -115,8 +115,7 @@ const (
 )
 
 func YesNoBackDialog(question string) YesNoAnswer {
-	answer := GetSingleAnswer(question+" (\x1b[33my/yes\x1b[0m, \x1b[33mn/no\x1b[0m or \x1b[33mb/back\x1b[0m):",
-		YesNoBackValidator)
+	answer := GetSingleAnswer(question+" ("+printColored("y/yes")+", "+printColored("n/no")+" or "+printColored("b/back")+"): ", YesNoBackValidator)
 
 	switch {
 	case strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes"):
@@ -128,8 +127,16 @@ func YesNoBackDialog(question string) YesNoAnswer {
 	}
 }
 
+func printColored(str string) string {
+	if runtime.GOOS == "windows" {
+		return str
+	} else {
+		return fmt.Sprintf("\x1b[33m%s\x1b[0m", str)
+	}
+}
+
 func printMenuItem(i int, v interface{}) {
-	fmt.Printf("   \x1b[33m[%d]\x1b[0m %v\n", i, v)
+	fmt.Printf("   ["+printColored("[%d]")+"] %v\n", i, v)
 }
 
 func SelectOneDialog(question string, opts []string) int {

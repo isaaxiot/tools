@@ -44,7 +44,7 @@ func YesNoValidator(inp string) bool {
 		strings.EqualFold(inp, "n") || strings.EqualFold(inp, "no") {
 		return true
 	} else {
-		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m OR \x1b[33mn/no\x1b[0m): ")
+		fmt.Print("[-] Unknown user input. Please enter (" + printColored("y/yes") + " OR " + printColored("n/no") + "): ")
 		return false
 	}
 }
