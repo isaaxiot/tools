@@ -102,7 +102,7 @@ Loop:
 }
 
 func YesNoDialog(question string) bool {
-	answer := GetSingleAnswer(question+" ("+printColored("y/yes")+", "+printColored("n/no")+"): ", YesNoValidator)
+	answer := GetSingleAnswer(question+" ("+PrintColored("y/yes")+", "+PrintColored("n/no")+"): ", YesNoValidator)
 	return strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes")
 }
 
@@ -115,7 +115,7 @@ const (
 )
 
 func YesNoBackDialog(question string) YesNoAnswer {
-	answer := GetSingleAnswer(question+" ("+printColored("y/yes")+", "+printColored("n/no")+" or "+printColored("b/back")+"): ", YesNoBackValidator)
+	answer := GetSingleAnswer(question+" ("+PrintColored("y/yes")+", "+PrintColored("n/no")+" or "+PrintColored("b/back")+"): ", YesNoBackValidator)
 
 	switch {
 	case strings.EqualFold(answer, "y") || strings.EqualFold(answer, "yes"):
@@ -127,7 +127,7 @@ func YesNoBackDialog(question string) YesNoAnswer {
 	}
 }
 
-func printColored(str string) string {
+func PrintColored(str string) string {
 	if runtime.GOOS == "windows" {
 		return str
 	} else {
@@ -136,7 +136,7 @@ func printColored(str string) string {
 }
 
 func printMenuItem(i int, v interface{}) {
-	fmt.Printf("   "+printColored("[%d]")+" %v\n", i, v)
+	fmt.Printf("   "+PrintColored("[%d]")+" %v\n", i, v)
 }
 
 func SelectOneDialog(question string, opts []string) int {

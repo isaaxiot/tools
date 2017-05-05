@@ -44,7 +44,7 @@ func YesNoValidator(inp string) bool {
 		strings.EqualFold(inp, "n") || strings.EqualFold(inp, "no") {
 		return true
 	} else {
-		fmt.Print("[-] Unknown user input. Please enter (" + printColored("y/yes") + " OR " + printColored("n/no") + "): ")
+		fmt.Print("[-] Unknown user input. Please enter (" + PrintColored("y/yes") + " OR " + PrintColored("n/no") + "): ")
 		return false
 	}
 }
@@ -55,7 +55,7 @@ func YesNoBackValidator(inp string) bool {
 		strings.EqualFold(inp, "b") || strings.EqualFold(inp, "back") {
 		return true
 	} else {
-		fmt.Print("[-] Unknown user input. Please enter (\x1b[33my/yes\x1b[0m, \x1b[33mn/no\x1b[0m or \x1b[33mb/back\x1b[0m): ")
+		fmt.Print("[-] Unknown user input. Please enter (" + PrintColored("y/yes") + ", " + PrintColored("n/no") + " or " + PrintColored("b/back") + "): ")
 		return false
 	}
 }
