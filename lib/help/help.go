@@ -917,15 +917,12 @@ func GetBinPath() string {
 }
 
 // DirExists returns whether the given file or directory exists or not
-func DirExists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
+func DirExists(path string) bool {
+	if _, err := os.Stat(path); err == nil {
+		return true
+	} else {
+		return !os.IsNotExist(err)
 	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return true, err
 }
 
 // return true if the given file is writable/readable/executable using the given mask by an owner
