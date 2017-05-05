@@ -1095,3 +1095,8 @@ func HashFileMD5(filePath string) (string, error) {
 
 	return hex.EncodeToString(hash.Sum(nil)[:16]), nil
 }
+
+// GetTempDir returns OS specific tmp folder location without trailing slash
+func GetTempDir() string {
+	return strings.TrimRight(os.TempDir(), string(os.PathSeparator))
+}
