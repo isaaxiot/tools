@@ -202,8 +202,10 @@ func CreateFile(path string) {
 }
 
 func CreateDir(path string) error {
-	err := os.MkdirAll(path, os.ModePerm)
-	if err != nil {
+	if DirExists(path) {
+		return nil
+	}
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		log.Error("Error creating dir: ", path, " error msg:", err.Error())
 		return err
 	}
@@ -600,12 +602,12 @@ func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *
 
 // Unzip into the destination folder
 func Unzip(src, dest string) error {
+	dest = dest + string(os.PathSeparator)
 	fmt.Printf("[+] Unzipping %s to %s\n", src, dest)
-	tokens := strings.Split(src, "/")
+	tokens := strings.Split(src, string(os.PathSeparator))
 	fileName := tokens[len(tokens)-1]
 	// create destination dir with 0777 access rights
-	//CreateDir(dest)
-	os.Mkdir(dest, os.ModePerm)
+	CreateDir(dest)
 	r, err := zip.OpenReader(src)
 	if err != nil {
 		return err
@@ -627,21 +629,19 @@ func Unzip(src, dest string) error {
 			return err
 		}
 		defer rc.Close()
-		fpath := filepath.Join(dest, f.Name)
+		fpath := filepath.Join(dest, filepath.FromSlash(f.Name))
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(fpath, os.ModePerm)
+			CreateDir(fpath)
 		} else {
 			var fdir string
 			if lastIndex := strings.LastIndex(fpath, string(os.PathSeparator)); lastIndex > -1 {
 				fdir = fpath[:lastIndex]
 			}
-			err = os.MkdirAll(fdir, os.ModePerm)
-			if err != nil {
+			if err := CreateDir(fdir); err != nil {
 				fmt.Println("[-] ", err.Error())
 				return err
 			}
-			dst_f, err := os.OpenFile(
-				fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+			dst_f, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 			if err != nil {
 				fmt.Println("[-] ", err.Error())
 				return err
