@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"unicode"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -135,8 +136,8 @@ func PrintColored(str string) string {
 	}
 }
 
-func printMenuItem(i int, v interface{}) {
-	fmt.Printf("   "+PrintColored("[%d]")+" %v\n", i, v)
+func printMenuItem(i, v interface{}) {
+	fmt.Printf("   "+PrintColored("[%v]")+" %v\n", i, v)
 }
 
 func SelectOneDialog(question string, opts []string) int {
@@ -160,7 +161,12 @@ func SelectOneDialog(question string, opts []string) int {
 
 		inp, err := strconv.Atoi(strings.TrimSpace(answer))
 		if err != nil || inp < 1 || inp > len(opts) {
-			fmt.Println("[-] Invalid user input, ", err, " please repeat: ")
+			var msg string
+			if err != nil {
+				msg = err.Error()
+			}
+
+			fmt.Println("[-] Invalid user input, ", msg, " please repeat: ")
 			continue
 		}
 
@@ -196,7 +202,12 @@ func SelectOneDialogWithBack(question string, opts []string) int {
 
 		inp, err := strconv.Atoi(strings.TrimSpace(answer))
 		if err != nil || inp < 0 || inp > len(opts) {
-			fmt.Println("[-] Invalid user input, ", err, " please repeat: ")
+			var msg string
+			if err != nil {
+				msg = err.Error()
+			}
+
+			fmt.Println("[-] Invalid user input, ", msg, " please repeat: ")
 			continue
 		}
 
@@ -206,4 +217,76 @@ func SelectOneDialogWithBack(question string, opts []string) int {
 	fmt.Println("\n[-] You reached maximum number of retries")
 	os.Exit(3)
 	return 0
+}
+
+// SelectMultipleDialog returns nil when "go back" choosen
+func SelectMultipleDialog(question string, opts []string, backItem bool) []int {
+	reader := bufio.NewReader(Handler.GetRead())
+	retries := 3
+
+	for i, v := range opts {
+		printMenuItem(i+1, v)
+	}
+
+	printMenuItem("*", "Select All")
+	if backItem {
+		printMenuItem(0, "Go Back")
+	}
+
+Retry:
+	for retries > 0 {
+		retries--
+		fmt.Println("[?]", question)
+		fmt.Print("[?] Separate multiple numbers with comma or space: ")
+
+		answer, err := reader.ReadString('\n')
+		if err != nil {
+			log.Error(err)
+			fmt.Println("[-] Could not read input string from stdin: ", err)
+			continue
+		}
+
+		fields := strings.FieldsFunc(answer, func(r rune) bool {
+			return r == ',' || unicode.IsSpace(r)
+		})
+
+		out := make([]int, len(fields))
+		for i, f := range fields {
+			// Select all
+			if f == "*" {
+				out := make([]int, len(opts))
+				for i := range opts {
+					out[i] = i
+				}
+				return out
+			}
+
+			var low int
+			if !backItem {
+				low = 1
+			}
+
+			val, err := strconv.Atoi(f)
+			if err != nil || val < low || val > len(opts) {
+				var msg string
+				if err != nil {
+					msg = err.Error()
+				}
+				fmt.Println("[-] Invalid user input, ", msg, " please repeat: ")
+				continue Retry
+			}
+
+			if backItem && val == 0 {
+				return nil
+			}
+
+			out[i] = val - 1
+		}
+
+		return out
+	}
+
+	fmt.Println("\n[-] You reached maximum number of retries")
+	os.Exit(3)
+	return nil
 }
