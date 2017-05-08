@@ -158,15 +158,13 @@ func SelectOneDialog(question string, opts []string) int {
 			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
 			continue
 		}
-
+		if len(strings.TrimSpace(answer)) == 0 {
+			continue
+		}
 		inp, err := strconv.Atoi(strings.TrimSpace(answer))
 		if err != nil || inp < 1 || inp > len(opts) {
-			var msg string
-			if err != nil {
-				msg = err.Error()
-			}
-
-			fmt.Println("[-] Invalid user input, ", msg, " please repeat: ")
+			log.Error(err)
+			fmt.Println("[-] Invalid user input, try again please.")
 			continue
 		}
 
