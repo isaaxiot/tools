@@ -325,6 +325,10 @@ func DownloadFromUrl(url, destination string) (string, error) {
 	return fileName, nil
 }
 
+func Exists(fullFileName string) bool {
+	return DirExists(fullFileName)
+}
+
 // DownloadFromUrl downloads target file to destination folder,
 // creates destination dir if does not exist
 // download file if does not already exist
@@ -353,7 +357,7 @@ func DownloadFromUrlAsync(url, destination string, readBytesChannel chan int64, 
 	length = response.ContentLength
 	// check maybe downloaded file exists
 	fullFileName := filepath.Join(destination, fileName)
-	if _, err := os.Stat(fullFileName); !os.IsNotExist(err) {
+	if Exists(fullFileName) {
 		downloadedFileLength, _ := GetFileLength(fullFileName)
 		sourceFileLength, _ := GetHTTPFileLength(url)
 		if sourceFileLength > downloadedFileLength && sourceFileLength != 0 {
@@ -370,7 +374,7 @@ func DownloadFromUrlAsync(url, destination string, readBytesChannel chan int64, 
 	} else { //file does not exist, download file
 		CreateDir(destination)
 		//create file
-		output, err := os.Create(fmt.Sprintf("%s/%s", destination, fileName))
+		output, err := os.Create(fmt.Sprintf("%s%s%s", destination, Separator(), fileName))
 		if err != nil {
 			log.Error("Error creating file ", destination, fileName)
 			return "", 0, err
@@ -567,8 +571,6 @@ func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *
 					// compare length of files, if length is the same - file is downloaded
 					fileLength, _ := GetFileLength(*filename)
 					urlFileLength, _ := GetHTTPFileLength(url)
-					fmt.Println(*filename, url)
-					fmt.Println(fileLength, urlFileLength)
 					if fileLength != urlFileLength {
 						fmt.Println("[-] Error occured with error message:", err.Error())
 						log.Error("Error occured while downloading remote file ", "error msg:", err.Error())
@@ -602,9 +604,9 @@ func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *
 
 // Unzip into the destination folder
 func Unzip(src, dest string) error {
-	dest = dest + string(os.PathSeparator)
+	dest = dest + Separator()
 	fmt.Printf("[+] Unzipping %s to %s\n", src, dest)
-	tokens := strings.Split(src, string(os.PathSeparator))
+	tokens := strings.Split(src, Separator())
 	fileName := tokens[len(tokens)-1]
 	// create destination dir with 0777 access rights
 	CreateDir(dest)
@@ -634,7 +636,7 @@ func Unzip(src, dest string) error {
 			CreateDir(fpath)
 		} else {
 			var fdir string
-			if lastIndex := strings.LastIndex(fpath, string(os.PathSeparator)); lastIndex > -1 {
+			if lastIndex := strings.LastIndex(fpath, Separator()); lastIndex > -1 {
 				fdir = fpath[:lastIndex]
 			}
 			if err := CreateDir(fdir); err != nil {
@@ -948,7 +950,7 @@ func CommandExitCode(e error) (int, error) {
 
 // Gets a filename from the path
 func FileName(path string) string {
-	split := strings.Split(path, string(os.PathSeparator))
+	split := strings.Split(path, Separator())
 	name := split[len(split)-1]
 	return name
 }
@@ -1098,5 +1100,5 @@ func HashFileMD5(filePath string) (string, error) {
 
 // GetTempDir returns OS specific tmp folder location without trailing slash
 func GetTempDir() string {
-	return strings.TrimRight(os.TempDir(), string(os.PathSeparator))
+	return strings.TrimRight(os.TempDir(), Separator())
 }
