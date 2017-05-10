@@ -213,7 +213,10 @@ func CreateDir(path string) error {
 }
 
 func DeleteFile(path string) error {
-	log.Debug("deleting file:", path)
+	log.Debug("Deleting file:", path)
+	if !Exists(path) {
+		return nil
+	}
 	err := os.Remove(path)
 	if err != nil {
 		LogError(err)
@@ -600,6 +603,21 @@ func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *
 
 	return filename, bar, nil
 
+}
+
+// GetZipFiles - gets the list of files inside zip archive
+func GetZipFiles(src string) ([]*zip.File, error) {
+	var files []*zip.File
+	r, err := zip.OpenReader(src)
+	if err != nil {
+		return files, err
+	}
+	defer r.Close()
+	// Iterate through the files in the archive
+	for _, f := range r.File {
+		files = append(files, f)
+	}
+	return files, nil
 }
 
 // Unzip into the destination folder
