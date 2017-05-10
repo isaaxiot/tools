@@ -1,9 +1,12 @@
 package ssh_helper
 
 import (
+	"bytes"
 	"os"
+	"os/exec"
+	"runtime"
 
-	"github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/hypersleep/easyssh"
 	"github.com/xshellinc/tools/lib/help"
 	"golang.org/x/crypto/ssh"
@@ -20,6 +23,7 @@ type Util interface {
 	Run(string) (string, string, error)
 	Stream(string) (chan string, chan string, chan bool, error)
 	ScpFromServer(string, string) error
+	ScpFrom(string, string) error
 }
 
 type config struct {
@@ -64,12 +68,12 @@ func (s *config) SetTimeout(timeout int) {
 func (s *config) Scp(src string, dst string) error {
 	fileName := help.FileName(src)
 
-	err := s.SSH.Scp(src, help.AddPathSuffix("unix", dst, fileName))
+	err := s.SSH.Scp(src, help.AddPathSuffix(runtime.GOOS, dst, fileName))
 	if err == nil {
 		return nil
 	}
 
-	logrus.Error(err)
+	log.Error(err)
 
 	if err := s.SSH.Scp(src, fileName); err != nil {
 		return err
@@ -100,6 +104,55 @@ func (s *config) Stream(command string) (chan string, chan string, chan bool, er
 		s.timer = s.timeout
 	}()
 	return s.SSH.Stream(command, s.timer)
+}
+
+// ScpFrom copies file from remote server using scp on both sides
+func (s *config) ScpFrom(src, dst string) error {
+	clientConfig := &ssh.ClientConfig{
+		User: s.SSH.User,
+		Auth: []ssh.AuthMethod{
+			ssh.Password(s.SSH.Password),
+		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+	client, err := ssh.Dial("tcp", s.SSH.Server+":"+s.SSH.Port, clientConfig)
+	if err != nil {
+		return err
+	}
+	session, err := client.NewSession()
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+	cmd := exec.Command("scp", "-t", "-r", "-v", dst)
+	outCmd, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	outSess, err := session.StdoutPipe()
+	if err != nil {
+		return err
+	}
+
+	errOut := &bytes.Buffer{}
+	cmd.Stderr = errOut
+	session.Stderr = errOut
+	cmd.Stdin = outSess
+	session.Stdin = outCmd
+	err = session.Start("scp -qrf " + src)
+	if err != nil {
+		if errOut.String() != "" {
+			log.Error(errOut.String())
+		}
+		return err
+	}
+	if err := cmd.Run(); err != nil {
+		if errOut.String() != "" {
+			log.Error(errOut.String())
+		}
+		return err
+	}
+	return nil
 }
 
 // ScpFromServer copies a file from remote server using readBufSz buffer
