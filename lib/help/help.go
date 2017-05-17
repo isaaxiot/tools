@@ -11,6 +11,7 @@ import (
 	"mime"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -1119,4 +1120,17 @@ func HashFileMD5(filePath string) (string, error) {
 // GetTempDir returns OS specific tmp folder location without trailing slash
 func GetTempDir() string {
 	return strings.TrimRight(os.TempDir(), Separator())
+}
+
+//ValidURL checks if the provided string is a valid URL
+func ValidURL(str string) bool {
+	u, err := url.Parse(str)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+	if u.Scheme == "" || u.Host == "" || u.Path == "" {
+		return false
+	}
+	return true
 }
