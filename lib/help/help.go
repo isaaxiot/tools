@@ -16,6 +16,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -31,6 +32,7 @@ import (
 	"github.com/xshellinc/tools/dialogs"
 	"github.com/xshellinc/tools/lib/sudo"
 	pb "gopkg.in/cheggaaa/pb.v1"
+	"unicode"
 )
 
 // Iface represents an entity with interfaceName hardware and ipv4
@@ -1133,4 +1135,79 @@ func ValidURL(str string) bool {
 		return false
 	}
 	return true
+}
+
+type RuneReader interface {
+	ReadRune() (rune, int, error)
+	UnreadRune() error
+}
+
+type RuneDecimalReader struct {
+	RuneReader
+}
+
+func (v *RuneDecimalReader) ReadRuneOrDecimal() (val int32, size int, err error) {
+	var dec string
+	for {
+		var s int
+		val, s, err = v.ReadRune()
+
+		size += s
+
+		if err != nil || !unicode.IsDigit(val) {
+			if dec != "" {
+				i, _ := strconv.Atoi(dec)
+				val = int32(i)
+
+				if err == nil {
+					v.UnreadRune()
+					size -= len(string(val))
+				}
+
+				err = nil
+			}
+			return
+		}
+
+		dec += string(val)
+	}
+}
+
+// Compare version strings
+// Symbols are compared by their unicode codes, decimal numbers are compared by value,
+// so strings "v1" and "v01" are equal and "rev20" is less than "rev120"
+
+func CompareVersions(a, b string) int {
+	ar := RuneDecimalReader{RuneReader: strings.NewReader(a)}
+	br := RuneDecimalReader{RuneReader: strings.NewReader(b)}
+
+	for {
+		av, _, err := ar.ReadRuneOrDecimal()
+		if err != nil {
+			av = -1
+		}
+
+		bv, _, err := br.ReadRuneOrDecimal()
+		if err != nil {
+			bv = -1
+		}
+
+		if av != bv || av == -1 || bv == -1 {
+			return int(av - bv)
+		}
+	}
+}
+
+func GetArch() (string, error) {
+	a, err := getArch()
+	if err != nil {
+		return "", nil
+	}
+	var armPattern = regexp.MustCompile(`^(?i)(armv?[0-9]{1,2})`)
+	arch := armPattern.FindString(a)
+	if arch != "" {
+		return arch, nil
+	}
+
+	return a, nil
 }
