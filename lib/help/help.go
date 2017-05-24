@@ -28,6 +28,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/hypersleep/easyssh"
+	"github.com/mitchellh/go-homedir"
 	"github.com/tj/go-spin"
 	"github.com/xshellinc/tools/dialogs"
 	"github.com/xshellinc/tools/lib/sudo"
@@ -56,14 +57,12 @@ const (
 
 // Gets homedir based on Os
 func UserHomeDir() string {
-	if runtime.GOOS == "windows" {
-		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
-		if home == "" {
-			home = os.Getenv("USERPROFILE")
-		}
-		return home
+	dir, err := homedir.Dir()
+	if err != nil {
+		log.Error(err)
+		return ""
 	}
-	return os.Getenv("HOME")
+	return dir
 }
 
 // Returns extract command based on the filename
