@@ -32,7 +32,7 @@ type MakeConfig struct {
 	Key             string
 	Port            string
 	Password        string
-	HostKeyCallback ssh.HostKeyCallback
+	HostKeyCallback ssh.HostKeyCallback `json:"-"`
 }
 
 // returns ssh.Signer from user you running app home path + cutted key path.
