@@ -1,47 +1,49 @@
 package dialogs
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"runtime"
 	"strconv"
 	"strings"
 	"unicode"
 
+	"github.com/Nerdmaster/terminal"
 	log "github.com/Sirupsen/logrus"
 )
 
-var Handler DialogHandler
+var p *terminal.Prompt
 
 const Retries = 5
 
-type DialogHandler struct {
-	Reader io.Reader
-}
-
-func (d *DialogHandler) GetRead() io.Reader {
-	if d.Reader == nil {
-		d.Reader = os.Stdin
+func readInput(prompt string) (string, error) {
+	oldState, err := terminal.MakeRaw(int(os.Stdin.Fd()))
+	if err != nil {
+		return "", err
 	}
-	return d.Reader
+	defer terminal.Restore(0, oldState)
+	p = terminal.NewPrompt(os.Stdin, os.Stdout, prompt)
+	p.OnKeypress = func(e *terminal.KeyEvent) {
+		if e.Key == terminal.KeyCtrlC {
+			terminal.Restore(0, oldState)
+			os.Exit(0)
+		}
+	}
+	return p.ReadLine()
 }
 
 func GetSingleAnswer(question string, validators ...ValidatorFn) string {
-	reader := bufio.NewReader(Handler.GetRead())
 	retries := Retries
-	fmt.Print("[?] ", question)
 
 Loop:
 	for retries > 0 {
 		retries--
 
-		inp, err := reader.ReadString('\n')
+		inp, err := readInput("[?] " + question)
 		if err != nil {
-			log.Error(err.Error())
+			log.Error(err)
 			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
-			fmt.Print("[?] Please repeat: ")
+			fmt.Print("[?] Please try again: ")
 			continue
 		}
 
@@ -52,7 +54,6 @@ Loop:
 				continue Loop
 			}
 		}
-
 		return inp
 	}
 
@@ -63,7 +64,6 @@ Loop:
 }
 
 func GetSingleNumber(question string, validators ...NumberValidatorFn) int {
-	reader := bufio.NewReader(Handler.GetRead())
 	retries := Retries
 	fmt.Print("[?] ", question)
 
@@ -71,29 +71,20 @@ Loop:
 	for retries > 0 {
 		retries--
 
-		inp, err := reader.ReadString('\n')
+		inp, err := readInput("[?] " + question)
+		answer, err := strconv.Atoi(inp)
 		if err != nil {
-			log.Error(err.Error())
-			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
-			fmt.Print("[?] Please repeat: ")
-			continue
-		}
-
-		num, err := strconv.Atoi(inp)
-		if err != nil {
-			log.Error(err.Error())
+			log.Error(err)
 			fmt.Println("[-] Invalid input: ", err.Error())
-			fmt.Print("[?] Please repeat: ")
 			continue
 		}
-
 		for _, validator := range validators {
-			if !validator(num) {
+			if !validator(answer) {
 				continue Loop
 			}
 		}
 
-		return num
+		return answer
 	}
 
 	fmt.Println("\n[-] You have reached maximum number of retries")
@@ -141,7 +132,6 @@ func printMenuItem(i, v interface{}) {
 }
 
 func SelectOneDialog(question string, opts []string) int {
-	reader := bufio.NewReader(Handler.GetRead())
 	retries := Retries
 
 	for i, v := range opts {
@@ -150,25 +140,18 @@ func SelectOneDialog(question string, opts []string) int {
 
 	for retries > 0 {
 		retries--
-		fmt.Print("[?] ", question)
-
-		answer, err := reader.ReadString('\n')
+		inp, err := readInput("[?] " + question)
 		if err != nil {
-			log.Error(err.Error())
-			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
+			fmt.Println("[-]", err.Error())
 			continue
 		}
-		if len(strings.TrimSpace(answer)) == 0 {
-			continue
-		}
-		inp, err := strconv.Atoi(strings.TrimSpace(answer))
-		if err != nil || inp < 1 || inp > len(opts) {
-			log.Error(err)
+		answer, err := strconv.Atoi(inp)
+		if err != nil || answer < 1 || answer > len(opts) {
 			fmt.Println("[-] Invalid user input, try again please.")
 			continue
 		}
 
-		return inp - 1
+		return answer - 1
 	}
 
 	fmt.Println("\n[-] You reached maximum number of retries")
@@ -178,7 +161,6 @@ func SelectOneDialog(question string, opts []string) int {
 
 // SelectOneDialogWithBack returns -1 when "go back" choosen
 func SelectOneDialogWithBack(question string, opts []string) int {
-	reader := bufio.NewReader(Handler.GetRead())
 	retries := 3
 
 	for i, v := range opts {
@@ -189,27 +171,19 @@ func SelectOneDialogWithBack(question string, opts []string) int {
 
 	for retries > 0 {
 		retries--
-		fmt.Print("[?] ", question)
-
-		answer, err := reader.ReadString('\n')
+		inp, err := readInput("[?] " + question)
 		if err != nil {
-			log.Error(err.Error())
-			fmt.Println("[-] Could not read input string from stdin: ", err.Error())
+			fmt.Println("[-]", err.Error())
 			continue
 		}
 
-		inp, err := strconv.Atoi(strings.TrimSpace(answer))
-		if err != nil || inp < 0 || inp > len(opts) {
-			var msg string
-			if err != nil {
-				msg = err.Error()
-			}
-
-			fmt.Println("[-] Invalid user input, ", msg, " please repeat: ")
+		answer, err := strconv.Atoi(inp)
+		if err != nil || answer < 1 || answer > len(opts) {
+			fmt.Println("[-] Invalid input, please try again: ")
 			continue
 		}
 
-		return inp - 1
+		return answer - 1
 	}
 
 	fmt.Println("\n[-] You reached maximum number of retries")
@@ -219,7 +193,6 @@ func SelectOneDialogWithBack(question string, opts []string) int {
 
 // SelectMultipleDialog returns nil when "go back" choosen
 func SelectMultipleDialog(question string, opts []string, backItem bool) []int {
-	reader := bufio.NewReader(Handler.GetRead())
 	retries := 3
 
 	for i, v := range opts {
@@ -235,9 +208,7 @@ Retry:
 	for retries > 0 {
 		retries--
 		fmt.Println("[?]", question)
-		fmt.Print("[?] Separate multiple numbers with comma or space: ")
-
-		answer, err := reader.ReadString('\n')
+		answer, err := readInput("[?] Separate multiple numbers with comma or space: ")
 		if err != nil {
 			log.Error(err)
 			fmt.Println("[-] Could not read input string from stdin: ", err)

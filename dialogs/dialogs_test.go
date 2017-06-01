@@ -13,6 +13,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var Handler DialogHandler
+
+type DialogHandler struct {
+	Reader io.Reader
+}
+
 func sumLength(arr []int64) int64 {
 	var c int64
 	for _, v := range arr {
@@ -185,12 +191,6 @@ func TestYesNoValidator(t *testing.T) {
 	a.Equal(true, YesNoValidator("y"))
 	a.Equal(true, YesNoValidator("n"))
 	a.Equal(true, YesNoValidator("no"))
-}
-
-func TestDialogHandler_GetRead(t *testing.T) {
-	a := assert.New(t)
-	o := DialogHandler{}
-	a.Equal(os.Stdin, o.GetRead())
 }
 
 func TestSpecialCharacterValidator(t *testing.T) {
