@@ -178,7 +178,7 @@ func SelectOneDialogWithBack(question string, opts []string) int {
 		}
 
 		answer, err := strconv.Atoi(inp)
-		if err != nil || answer < 1 || answer > len(opts) {
+		if err != nil || answer < 0 || answer > len(opts) {
 			fmt.Println("[-] Invalid input, please try again: ")
 			continue
 		}

@@ -355,7 +355,7 @@ func DownloadFromUrlAsync(url, destination string, readBytesChannel chan int64, 
 	if err != nil {
 		tokens := strings.Split(url, "/")
 		fileName = tokens[len(tokens)-1]
-		log.Error("Error parsing media type ", "error msg:", err.Error())
+		// log.Error("Error parsing media type ", "error msg:", err.Error())
 	} else {
 		fileName = params["filename"]
 	}
@@ -393,7 +393,10 @@ func DownloadFromUrlAsync(url, destination string, readBytesChannel chan int64, 
 			prd := NewHttpProxyReader(response.Body, func(n int, err error) {
 				ch <- int64(n)
 				if err != nil {
-					log.Error("error occured, sending error down the channel")
+					if err.Error() == "EOF" {
+						return
+					}
+					log.WithField("err", err).Error("error occured, sending error down the channel")
 					errorChan <- err
 					return
 				}
@@ -564,13 +567,13 @@ func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *
 			case n, ok := <-ch:
 				if !ok {
 					ch = nil
-					log.Debug("Bytes chan is closed")
+					// log.Debug("Bytes chan is closed")
 				}
 				bar.Add64(n)
 			case err, ok := <-errorChan:
 				if !ok {
 					errorChan = nil
-					log.Debug("Error chan is closed")
+					// log.Debug("Error chan is closed")
 				}
 				if err != nil {
 					// compare length of files, if length is the same - file is downloaded
@@ -1074,9 +1077,9 @@ func LogError(err error) {
 // Exits with the code 1 in case of any error
 func ExitOnError(err error) {
 	if err != nil {
-		fmt.Println("[-] Error: ", err.Error())
-		fmt.Println("[-] Exiting ... ")
-		log.Fatal("erro msg:", err.Error())
+		fmt.Println("[-] Error:", err.Error())
+		fmt.Println("[-] Exiting...")
+		log.Fatal(err)
 	}
 }
 
