@@ -496,7 +496,6 @@ func GetFileLength(path string) (int64, error) {
 	}
 
 	return stat.Size(), nil
-
 }
 
 func GetHTTPFileLength(url string) (int64, error) {
@@ -610,6 +609,35 @@ func DownloadFromUrlWithAttemptsAsync(url, destination string, retries int, wg *
 
 }
 
+func DownloadFile(dst string, url string) (err error) {
+	if Exists(dst) {
+		downloadedFileLength, _ := GetFileLength(dst)
+		sourceFileLength, _ := GetHTTPFileLength(url)
+		if downloadedFileLength == sourceFileLength {
+			return nil
+		}
+		DeleteFile(dst)
+	}
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetZipFiles - gets the list of files inside zip archive
 func GetZipFiles(src string) ([]*zip.File, error) {
 	var files []*zip.File
@@ -628,7 +656,7 @@ func GetZipFiles(src string) ([]*zip.File, error) {
 // Unzip into the destination folder
 func Unzip(src, dest string) error {
 	dest = dest + Separator()
-	fmt.Printf("[+] Unzipping %s to %s\n", src, dest)
+	log.WithField("src", src).WithField("dest", dest).Info("Unzipping")
 	tokens := strings.Split(src, Separator())
 	fileName := tokens[len(tokens)-1]
 	// create destination dir with 0777 access rights
