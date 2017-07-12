@@ -26,9 +26,9 @@ import (
 
 	"io/ioutil"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/hypersleep/easyssh"
 	"github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/tj/go-spin"
 	"github.com/xshellinc/tools/dialogs"
 	"github.com/xshellinc/tools/lib/sudo"
