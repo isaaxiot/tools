@@ -15,7 +15,7 @@ const (
 	UNAME_RASPBERRY  = "raspberrypi"
 	UNAME_NANOPI     = "FriendlyARM"
 	UNAME_BEAGLEBONE = "BeagleBone"
-	UNAME_TINKER     = "tinker"
+	UNAME_TINKER     = "linaro"
 
 	DEVICE_TYPE_RASPBERRY  = "raspberry-pi"
 	DEVICE_TYPE_EDISON     = "edison"
