@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/hypersleep/easyssh"
+	"github.com/xshellinc/easyssh"
 	"github.com/xshellinc/tools/lib/help"
 	"golang.org/x/crypto/ssh"
 )
